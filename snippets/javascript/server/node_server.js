@@ -1,58 +1,97 @@
-import { createServer } from "node:http";
+import { createServer as createNodeServer } from "node:http";
 import fs from "node:fs";
 import ejs from "ejs";
 
-const hostname = "localhost";
-const port = 3000;
-const rootPath = "..";
-const mainPagePath = `${rootPath}/compare_code.html`;
+export default class NodeServer {
+  static #hostname = "localhost";
+  static #port = 3000;
+  static #rootPath = "..";
+  static #mainPagePath = `${NodeServer.#rootPath}/compare_code.html`;
 
-const server = createServer((request, response) => {
-  console.log(`Request from: url=${request.url}, method=${request.method}`);
+  static createServer = () => {
+    return createNodeServer((request, response) => {
+      console.log(
+        `Starting ${request.method.toUpperCase()}, url: ${request.url}`
+      );
 
-  if (request.url === "/favicon.ico") {
-    const view = renderView("./favicon.ico");
-    response.statusCode = isNotFound(view) ? 404 : 200;
-    response.setHeader("Content-Type", "image/x-icon");
-    response.end(view);
-  } else if (request.url.includes(".") || request.method !== "GET") {
-    response.statusCode = 400;
-    response.setHeader("Content-Type", "text/plain");
-    response.end("400 Bad Request");
-  } else {
-    const view =
-      request.url === "/"
-        ? renderView(mainPagePath)
-        : renderView(`${rootPath}${request.url}.html`);
+      if (this.#isAppIcon(request)) {
+        this.#renderAppIcon(response);
+      } else if (this.#isBadRequest(request)) {
+        this.#returnBadRequest(response);
+      } else {
+        this.#renderPage(request, response);
+      }
+    });
+  };
 
-    response.statusCode = isNotFound(view) ? 404 : 200;
-    response.setHeader("Content-Type", "text/html");
-    response.end(view);
-  }
-});
+  static activate = (server) => {
+    server.listen(NodeServer.#port, NodeServer.#hostname, () => {
+      console.log(
+        `Server running at http://${NodeServer.#hostname}:${NodeServer.#port}/`
+      );
+      console.log("Press Ctrl+C to stop the server.");
+    });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
-  console.log("Press Ctrl+C to stop the server.");
-});
+    this.#listenExit();
+  };
 
-process.on("SIGINT", () => {
-  console.log("\nGoodbye!");
-  process.exit();
-});
+  // private
 
-const renderView = (path) => {
-  try {
-    return fs.readFileSync(path, "utf-8");
-  } catch {
-    return render404(`${path} not found`);
-  }
-};
+  static #renderPage = (req, res) => {
+    const view = this.#isRoot(req)
+      ? this.#renderView(NodeServer.#mainPagePath)
+      : this.#renderView(`${NodeServer.#rootPath}${req.url}.html`);
 
-const render404 = (message) => {
-  return ejs.render(fs.readFileSync("./404.html.ejs", "utf-8"), { message });
-};
+    res.statusCode = this.#isNotFound(view) ? 404 : 200;
+    res.setHeader("Content-Type", "text/html");
+    res.end(view);
+  };
 
-const isNotFound = (view) => {
-  return view.includes("<title>404</title>");
-};
+  static #renderAppIcon = (res) => {
+    const icon = this.#renderView("./favicon.ico");
+    res.statusCode = this.#isNotFound(icon) ? 404 : 200;
+    res.setHeader("Content-Type", "image/x-icon");
+    res.end(icon);
+  };
+
+  static #returnBadRequest = (res) => {
+    res.statusCode = 400;
+    res.setHeader("Content-Type", "text/plain");
+    res.end("400 Bad Request");
+  };
+
+  static #renderView = (path) => {
+    try {
+      return fs.readFileSync(path, "utf-8");
+    } catch {
+      return this.#render404(`${path} not found`);
+    }
+  };
+
+  static #render404 = (message) => {
+    return ejs.render(fs.readFileSync("./404.html.ejs", "utf-8"), { message });
+  };
+
+  static #listenExit = () => {
+    process.on("SIGINT", () => {
+      console.log("\nGoodbye!");
+      process.exit();
+    });
+  };
+
+  static #isAppIcon = (req) => {
+    return req.url === "/favicon.ico";
+  };
+
+  static #isBadRequest = (req) => {
+    return req.url.includes(".") || req.method !== "GET";
+  };
+
+  static #isRoot = (req) => {
+    return req.url === "/";
+  };
+
+  static #isNotFound = (view) => {
+    return view.includes("<title>404</title>");
+  };
+}
