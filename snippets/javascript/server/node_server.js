@@ -11,7 +11,7 @@ export default class NodeServer {
   static createServer = () => {
     return createNodeServer((request, response) => {
       console.log(
-        `Starting ${request.method.toUpperCase()}, url: ${request.url}`
+        `[info] Starting ${request.method.toUpperCase()}, url: ${request.url}`
       );
 
       if (this.#isAppIcon(request)) {
@@ -27,9 +27,11 @@ export default class NodeServer {
   static activate = (server) => {
     server.listen(NodeServer.#port, NodeServer.#hostname, () => {
       console.log(
-        `Server running at http://${NodeServer.#hostname}:${NodeServer.#port}/`
+        `[info] Server running at http://${NodeServer.#hostname}:${
+          NodeServer.#port
+        }/`
       );
-      console.log("Press Ctrl+C to stop the server.");
+      console.log("[info] Press Ctrl+C to stop the server.");
     });
 
     this.#listenExit();
@@ -43,6 +45,9 @@ export default class NodeServer {
       : this.#renderView(`${NodeServer.#rootPath}${req.url}.html`);
 
     res.statusCode = this.#isNotFound(view) ? 404 : 200;
+    if (req.statusCode === 404) {
+      console.log("[warn] Not Found: ${req.url}");
+    }
     res.setHeader("Content-Type", "text/html");
     res.end(view);
   };
@@ -55,6 +60,7 @@ export default class NodeServer {
   };
 
   static #returnBadRequest = (res) => {
+    console.log("[warn] Bad Request, returning 400");
     res.statusCode = 400;
     res.setHeader("Content-Type", "text/plain");
     res.end("400 Bad Request");
