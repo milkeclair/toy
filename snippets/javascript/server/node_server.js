@@ -15,6 +15,10 @@ const server = createServer((request, response) => {
     response.statusCode = isNotFound(view) ? 404 : 200;
     response.setHeader("Content-Type", "image/x-icon");
     response.end(view);
+  } else if (request.url.includes(".") || request.method !== "GET") {
+    response.statusCode = 400;
+    response.setHeader("Content-Type", "text/plain");
+    response.end("400 Bad Request");
   } else {
     const view =
       request.url === "/"
@@ -41,10 +45,12 @@ const renderView = (path) => {
   try {
     return fs.readFileSync(path, "utf-8");
   } catch {
-    return ejs.render(fs.readFileSync("./404.html.ejs", "utf-8"), {
-      message: `${path} not found`,
-    });
+    return render404(`${path} not found`);
   }
+};
+
+const render404 = (message) => {
+  return ejs.render(fs.readFileSync("./404.html.ejs", "utf-8"), { message });
 };
 
 const isNotFound = (view) => {
