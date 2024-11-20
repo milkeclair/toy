@@ -1,12 +1,10 @@
 import { createServer as createNodeServer } from "node:http";
-import fs from "node:fs";
-import ejs from "ejs";
+import NodeRenderer from "./node_renderer.js";
 
-export default class NodeServer {
+export default class NodeController {
   static #hostname = "localhost";
   static #port = 3000;
-  static #rootPath = "..";
-  static #mainPagePath = `${NodeServer.#rootPath}/compare_code.html`;
+  static #mainPagePath = `/compare_code.html`;
 
   static createServer = () => {
     return createNodeServer((request, response) => {
@@ -14,47 +12,44 @@ export default class NodeServer {
         `[info] Starting ${request.method.toUpperCase()}, url: ${request.url}`
       );
 
-      if (this.#isAppIcon(request)) {
-        this.#renderAppIcon(response);
-      } else if (this.#isBadRequest(request)) {
-        this.#returnBadRequest(response);
+      if (NodeController.#isAppIcon(request)) {
+        NodeController.#renderAppIcon(response);
+      } else if (NodeController.#isBadRequest(request)) {
+        NodeController.#returnBadRequest(response);
       } else {
-        this.#renderPage(request, response);
+        NodeController.#renderPage(request, response);
       }
     });
   };
 
   static activate = (server) => {
-    server.listen(NodeServer.#port, NodeServer.#hostname, () => {
+    server.listen(NodeController.#port, NodeController.#hostname, () => {
       console.log(
-        `[info] Server running at http://${NodeServer.#hostname}:${
-          NodeServer.#port
+        `[info] Server running at http://${NodeController.#hostname}:${
+          NodeController.#port
         }/`
       );
       console.log("[info] Press Ctrl+C to stop the server.");
     });
 
-    this.#listenExit();
+    NodeController.#listenExit();
   };
 
   // private
 
   static #renderPage = (req, res) => {
-    const view = this.#isRoot(req)
-      ? this.#renderView(NodeServer.#mainPagePath)
-      : this.#renderView(`${NodeServer.#rootPath}${req.url}.html`);
+    const view = NodeController.#isRoot(req)
+      ? NodeRenderer.render(NodeController.#mainPagePath)
+      : NodeRenderer.render(req.url);
 
-    res.statusCode = this.#isNotFound(view) ? 404 : 200;
-    if (req.statusCode === 404) {
-      console.log("[warn] Not Found: ${req.url}");
-    }
+    res.statusCode = NodeController.#isNotFound(view) ? 404 : 200;
     res.setHeader("Content-Type", "text/html");
     res.end(view);
   };
 
   static #renderAppIcon = (res) => {
-    const icon = this.#renderView("./favicon.ico");
-    res.statusCode = this.#isNotFound(icon) ? 404 : 200;
+    const icon = NodeRenderer.renderAppIcon();
+    res.statusCode = NodeController.#isNotFound(icon) ? 404 : 200;
     res.setHeader("Content-Type", "image/x-icon");
     res.end(icon);
   };
@@ -64,18 +59,6 @@ export default class NodeServer {
     res.statusCode = 400;
     res.setHeader("Content-Type", "text/plain");
     res.end("400 Bad Request");
-  };
-
-  static #renderView = (path) => {
-    try {
-      return fs.readFileSync(path, "utf-8");
-    } catch {
-      return this.#render404(`${path} not found`);
-    }
-  };
-
-  static #render404 = (message) => {
-    return ejs.render(fs.readFileSync("./404.html.ejs", "utf-8"), { message });
   };
 
   static #listenExit = () => {
