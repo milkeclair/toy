@@ -4,7 +4,7 @@ import NodeRenderer from "./node_renderer.js";
 export default class NodeController {
   static #hostname = "localhost";
   static #port = 3000;
-  static #mainPagePath = `/compare_code.html`;
+  static #mainPagePath = `/compare_code`;
 
   static createServer = () => {
     return createNodeServer((request, response) => {
