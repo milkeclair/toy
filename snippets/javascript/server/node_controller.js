@@ -29,7 +29,7 @@ export default class NodeController {
     NodeController.#listenExit();
   };
 
-  static Actions = {
+  static Action = {
     badRequest: (res) => {
       console.log("[warn] Bad Request, returning 400");
       res.statusCode = 400;
@@ -39,27 +39,43 @@ export default class NodeController {
 
     notFound: (req, res) => {
       console.log(`[warn] Not Found: ${req.url}, returning 404`);
-      res.statusCode = 404;
-      res.setHeader("Content-Type", "text/html");
-      res.end(NodeRenderer.renderNotFound(`${req.url} not found`));
+      const view = NodeRenderer.renderNotFound(`${req.url} not found`);
+      NodeController.#setStatusCode(res, view);
+      NodeController.#setHeader(res, "html");
+      res.end(view);
     },
 
     appIcon: (req, res) => {
       const icon = NodeRenderer.render(req.url);
-      res.statusCode = NodeRouter.isNotFound(icon) ? 404 : 200;
-      res.setHeader("Content-Type", "image/x-icon");
+      NodeController.#setStatusCode(res, icon);
+      NodeController.#setHeader(res, "ico");
       res.end(icon);
     },
 
     page: (req, res) => {
       const view = NodeRenderer.render(req.url);
-      res.statusCode = NodeRouter.isNotFound(view) ? 404 : 200;
-      res.setHeader("Content-Type", "text/html");
+      NodeController.#setStatusCode(res, view);
+      NodeController.#setHeader(res, "html");
       res.end(view);
+    },
+
+    script: (req, res) => {
+      const script = NodeRenderer.render(req.url);
+      NodeController.#setStatusCode(res, script);
+      NodeController.#setHeader(res, "js");
+      res.end(script);
     },
   };
 
   // private
+
+  static #setStatusCode = (res, view) => {
+    res.statusCode = NodeRenderer.isNotFoundView(view) ? 404 : 200;
+  };
+
+  static #setHeader = (res, type) => {
+    res.setHeader("Content-Type", NodeRenderer.mineTypes[type]);
+  };
 
   static #listenExit = () => {
     process.on("SIGINT", () => {

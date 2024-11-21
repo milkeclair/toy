@@ -3,6 +3,14 @@ import ejs from "ejs";
 import NodeRouter from "./node_router.js";
 
 export default class NodeRenderer {
+  static mineTypes = {
+    html: "text/html",
+    css: "text/css",
+    js: "text/javascript",
+    png: "image/png",
+    ico: "image/x-icon",
+  };
+
   static render = (url) => {
     return NodeRenderer.#renderView(NodeRouter.allowedRoutes[url]);
   };
@@ -12,6 +20,10 @@ export default class NodeRenderer {
       fs.readFileSync(NodeRouter.allowedRoutes["/404"], "utf-8"),
       { message }
     );
+  };
+
+  static isNotFoundView = (view) => {
+    return view.includes("<title>404</title>");
   };
 
   // private

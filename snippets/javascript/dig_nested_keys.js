@@ -1,4 +1,4 @@
-class DigNestedKeys {
+export default class DigNestedKeys {
   static digNestedKeys = (keys, obj) => {
     // accには第2引数のobjが入る
     // keyには第1引数のkeysの要素が順に入る
@@ -7,3 +7,13 @@ class DigNestedKeys {
     }, obj);
   };
 }
+
+const obj = {
+  a: {
+    b: {
+      c: "d",
+    },
+  },
+};
+
+console.log(DigNestedKeys.digNestedKeys(["a", "b", "c"], obj)); // => "d"
