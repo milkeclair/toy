@@ -17,25 +17,23 @@ export default class NodeController {
       res.end(view);
     },
 
+    deliver: (req, res, mimeType) => {
+      const content = NodeRenderer.render(req.url);
+      NodeController.#setStatusCode(res, content);
+      NodeController.#setHeader(res, mimeType);
+      res.end(content);
+    },
+
     appIcon: (req, res) => {
-      const icon = NodeRenderer.render(req.url);
-      NodeController.#setStatusCode(res, icon);
-      NodeController.#setHeader(res, "ico");
-      res.end(icon);
+      NodeController.Action.deliver(req, res, "ico");
     },
 
     page: (req, res) => {
-      const view = NodeRenderer.render(req.url);
-      NodeController.#setStatusCode(res, view);
-      NodeController.#setHeader(res, "html");
-      res.end(view);
+      NodeController.Action.deliver(req, res, "html");
     },
 
     script: (req, res) => {
-      const script = NodeRenderer.render(req.url);
-      NodeController.#setStatusCode(res, script);
-      NodeController.#setHeader(res, "js");
-      res.end(script);
+      NodeController.Action.deliver(req, res, "js");
     },
   };
 
