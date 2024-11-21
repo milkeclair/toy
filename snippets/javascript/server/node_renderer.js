@@ -3,7 +3,7 @@ import ejs from "ejs";
 import NodeRouter from "./node_router.js";
 
 export default class NodeRenderer {
-  static mineTypes = {
+  static mimeTypes = {
     html: "text/html",
     css: "text/css",
     js: "text/javascript",

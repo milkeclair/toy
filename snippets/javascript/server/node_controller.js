@@ -46,6 +46,6 @@ export default class NodeController {
   };
 
   static #setHeader = (res, type) => {
-    res.setHeader("Content-Type", NodeRenderer.mineTypes[type]);
+    res.setHeader("Content-Type", NodeRenderer.mimeTypes[type]);
   };
 }
