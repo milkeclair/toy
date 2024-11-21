@@ -1,34 +1,6 @@
-import { createServer as createNodeServer } from "node:http";
 import NodeRenderer from "./node_renderer.js";
-import NodeRouter from "./node_router.js";
 
 export default class NodeController {
-  static #hostname = "localhost";
-  static #port = 3000;
-
-  static createServer = () => {
-    return createNodeServer((request, response) => {
-      console.log(
-        `[info] Starting ${request.method.toUpperCase()}, url: ${request.url}`
-      );
-
-      NodeRouter.handle(request, response);
-    });
-  };
-
-  static activate = (server) => {
-    server.listen(NodeController.#port, NodeController.#hostname, () => {
-      console.log(
-        `[info] Server running at http://${NodeController.#hostname}:${
-          NodeController.#port
-        }/`
-      );
-      console.log("[info] Press Ctrl+C to stop the server.");
-    });
-
-    NodeController.#listenExit();
-  };
-
   static Action = {
     badRequest: (res) => {
       console.log("[warn] Bad Request, returning 400");
@@ -75,12 +47,5 @@ export default class NodeController {
 
   static #setHeader = (res, type) => {
     res.setHeader("Content-Type", NodeRenderer.mineTypes[type]);
-  };
-
-  static #listenExit = () => {
-    process.on("SIGINT", () => {
-      console.log("\nGoodbye!");
-      process.exit();
-    });
   };
 }

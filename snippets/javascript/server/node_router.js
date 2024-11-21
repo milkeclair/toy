@@ -11,36 +11,34 @@ export default class NodeRouter {
   };
 
   static handle = (req, res) => {
-    if (NodeRouter.isBadRequest(req)) {
+    if (NodeRouter.#isBadRequest(req)) {
       NodeController.Action.badRequest(res);
-    } else if (NodeRouter.isNotFound(req)) {
+    } else if (NodeRouter.#isNotFound(req)) {
       NodeController.Action.notFound(req, res);
-    } else if (NodeRouter.isAppIcon(req)) {
+    } else if (NodeRouter.#isAppIcon(req)) {
       NodeController.Action.appIcon(req, res);
-    } else if (NodeRouter.isScript(req)) {
+    } else if (NodeRouter.#isScript(req)) {
       NodeController.Action.script(req, res);
     } else {
       NodeController.Action.page(req, res);
     }
   };
 
-  static isRoot = (req) => {
-    return req.url === "/";
-  };
+  // private
 
-  static isBadRequest = (req) => {
+  static #isBadRequest = (req) => {
     return req.method !== "GET";
   };
 
-  static isNotFound = (req) => {
+  static #isNotFound = (req) => {
     return !NodeRouter.allowedRoutes[req.url] || req.url === "/404";
   };
 
-  static isAppIcon = (req) => {
+  static #isAppIcon = (req) => {
     return req.url === "/favicon.ico";
   };
 
-  static isScript = (req) => {
+  static #isScript = (req) => {
     return req.url.includes(".js");
   };
 }

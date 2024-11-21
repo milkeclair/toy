@@ -1,4 +1,4 @@
-import NodeController from "./node_controller.js";
+import NodeServer from "./node_server.js";
 
-const server = NodeController.createServer();
-NodeController.activate(server);
+const server = NodeServer.createServer();
+NodeServer.activate(server);
