@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import NodeController from "./node_controller.js";
 
 export default class NodeRouter {
@@ -6,11 +7,11 @@ export default class NodeRouter {
     "/compare_code": "../compare_code.html",
     "/favicon.ico": "./favicon.ico",
     "/404": "./404.html.ejs",
-    "/dig_nested_keys.js": "../dig_nested_keys.js",
-    "/flatten.js": "../flatten.js",
   };
 
   static handle = (req, res) => {
+    NodeRouter.#addJSRoutes();
+
     if (NodeRouter.#isBadRequest(req)) {
       NodeController.Action.badRequest(res);
     } else if (NodeRouter.#isNotFound(req)) {
@@ -25,6 +26,14 @@ export default class NodeRouter {
   };
 
   // private
+
+  static #addJSRoutes = () => {
+    const js_files = fs.readdirSync("../").filter((file) => file.includes(".js"));
+    NodeRouter.allowedRoutes = js_files.reduce((routes, file) => {
+      routes[`/${file}`] = `../${file}`;
+      return routes;
+    }, NodeRouter.allowedRoutes);
+  };
 
   static #isBadRequest = (req) => {
     return req.method !== "GET";
