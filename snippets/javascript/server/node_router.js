@@ -4,13 +4,12 @@ import NodeController from "./node_controller.js";
 export default class NodeRouter {
   static allowedRoutes = {
     "/": "../compare_code.html",
-    "/compare_code": "../compare_code.html",
     "/favicon.ico": "./favicon.ico",
     "/404": "./404.html.ejs",
   };
 
   static handle = (req, res) => {
-    NodeRouter.#addJSRoutes();
+    NodeRouter.#registerRoutes([".html", ".css", ".js"]);
 
     if (NodeRouter.#isBadRequest(req)) {
       NodeController.Action.badRequest(res);
@@ -27,12 +26,15 @@ export default class NodeRouter {
 
   // private
 
-  static #addJSRoutes = () => {
-    const js_files = fs.readdirSync("../").filter((file) => file.includes(".js"));
-    NodeRouter.allowedRoutes = js_files.reduce((routes, file) => {
-      routes[`/${file}`] = `../${file}`;
-      return routes;
-    }, NodeRouter.allowedRoutes);
+  static #registerRoutes = (extensions) => {
+    extensions.forEach((extension) => {
+      const files = fs.readdirSync("../").filter((file) => file.includes(extension));
+      NodeRouter.allowedRoutes = files.reduce((routes, file) => {
+        const path = extension === ".html" ? `/${file.replace(extension, "")}` : `/${file}`;
+        routes[path] = `../${file}`;
+        return routes;
+      }, NodeRouter.allowedRoutes);
+    });
   };
 
   static #isBadRequest = (req) => {
