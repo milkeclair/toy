@@ -8,7 +8,8 @@
   - [dig_nested_keys.js](https://github.com/milkeclair/toy/tree/main/snippets/javascript/dig_nested_keys.js): dig nested keys in object
   - [server.sh](https://github.com/milkeclair/toy/tree/main/snippets/javascript/server.sh): start a server to check js
   - **server**
-    - [server.js](https://github.com/milkeclair/toy/tree/main/snippets/javascript/server/server.js): node server
+    - [server.js](https://github.com/milkeclair/toy/tree/main/snippets/javascript/server/server.js): creation and activation server
+    - [node_server.js](https://github.com/milkeclair/toy/tree/main/snippets/javascript/server/node_server.js): http server
     - [node_controller.js](https://github.com/milkeclair/toy/tree/main/snippets/javascript/server/node_controller.js): controller for server
     - [node_renderer.js](https://github.com/milkeclair/toy/tree/main/snippets/javascript/server/node_renderer.js): view renderer
     - [node_router.js](https://github.com/milkeclair/toy/tree/main/snippets/javascript/server/node_router.js): routing for server
