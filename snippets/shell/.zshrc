@@ -1,6 +1,6 @@
 git_author_stats() {
   # example: ("html" "css")
-  local exclude_exts=('html' 'css')
+  exclude_exts=('html' 'css')
   # example: ('node_modules')
   exclude_dirs=("node_modules")
   local authors=($(git_hp_get_author_names))
