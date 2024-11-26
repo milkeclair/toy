@@ -3,6 +3,8 @@ git_author_stats() {
   exclude_exts=('html' 'css')
   # example: ('node_modules')
   exclude_dirs=("node_modules")
+  echo -e "exclude_exts: ${exclude_exts[*]}\nexclude_dirs: ${exclude_dirs[*]}\n"
+
   local authors=($(git_hp_get_author_names))
   # example: ("drumcan smith" "dr mince") -> ("drumcan_smith" "dr_mince")
   local formatted_authors=($(git_hp_get_author_names | sed 's/ /_/g'))
