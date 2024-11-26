@@ -1,5 +1,8 @@
 git_author_stats() {
+  # example: ("html" "css")
   local exclude_exts=('html' 'css')
+  # example: ('node_modules')
+  exclude_dirs=("node_modules")
   local authors=($(git_hp_get_author_names))
   # example: ("drumcan smith" "dr mince") -> ("drumcan_smith" "dr_mince")
   local formatted_authors=($(git_hp_get_author_names | sed 's/ /_/g'))
@@ -9,7 +12,7 @@ git_author_stats() {
 
   for author in "${authors[@]}"; do
     # inserted, deleted
-    local commits=$(git_hp_get_commits "$author" "${exclude_exts[@]}")
+    local commits=$(git_hp_get_commits "$author")
     local commit_count=$(git_hp_get_commit_count "$author")
     local inserted=$(echo $commits | awk '{print $1}')
     local deleted=$(echo $commits | awk '{print $2}')
@@ -75,14 +78,20 @@ git_hp_get_commit_count() {
 git_hp_get_commits() {
   local author=$1
   shift
-  local exclude_exts=("$@")
   # grep -v -E: exclude files with specific extensions
-  # "\.($(IFS=\|; echo "${exclude_exts[*]}"))$" => "\.(html|css)$"
+  # example: \.(html|css)$
+  local exclude_exts_pattern="\.($(
+    IFS=\|
+    echo "${exclude_exts[*]}"
+  ))$"
+  # example: /(node_modules|dist)/
+  local exclude_dirs_pattern="($(
+    IFS=\|
+    echo "${exclude_dirs[*]}"
+  ))/"
+
   git log --pretty=tformat: --numstat --author="$author" |
-    grep -v -E "\.($(
-      IFS=\|
-      echo "${exclude_exts[*]}"
-    ))$" |
+    grep -v -E "$exclude_exts_pattern|$exclude_dirs_pattern" |
     awk '{inserted+=$1; deleted+=$2} END {print inserted, deleted}'
 }
 
