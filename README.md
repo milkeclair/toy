@@ -1,13 +1,16 @@
 # コード置き場
 
-- **snipets**
+- **snippets**
   - **ruby**
+    - `compare_code.rb`: for develop
     - `async_await.rb`: concurrent with thread
     - `debounce.rb`: debounce with thread
     - `time_converter_from_seconds.rb`: learned closure
+    - `multi_byte_ljust.rb`: left just for multiple byte string
   - **javascript**
-    - `dig_nested_keys.js`: dig nested keys in object
+    - `compare_code.html`: for check js in browser
     - `server.sh`: start a server to check js
+    - `dig_nested_keys.js`: dig nested keys in object
     - **server**
       - `server.js`: creation and activation server
       - `node_server.js`: http server
@@ -15,10 +18,15 @@
       - `node_renderer.js`: view renderer
       - `node_router.js`: routing for server
       - `node_setup_functions.sh`: helper for server setup
+      - `404.html.ejs`: not found page
   - **shell**
+    - `.zshrc`: zshrc
+    - `bash_command.zsh`: add util command for bash
+    - `git_command.zsh`: add util command for git
     - **commands**
       - **bash**
         - `perm.zsh`: change directory and inner directories permission to me
         - `reload.zsh`: reload .zshrc
       - **git**
         - `author_stats.zsh`: show all authors commited count, add lines, delete lines, and total lines
+        - `current_branch.zsh`: if inside work tree then show current branch
