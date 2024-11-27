@@ -9,6 +9,8 @@ export default class NodeRouter {
     "/404": "./view/404.html.ejs",
   };
 
+  static registeredTime = null;
+
   static extensionPaths = {
     ".html": ["./view/"],
     ".css": ["./assets/css/"],
@@ -34,11 +36,21 @@ export default class NodeRouter {
   // private
 
   static #registerRoutes = (extensions) => {
+    NodeRouter.registeredTime ??= Date.now();
+    if (NodeRouter.#isLatestRoutes()) {
+      return;
+    }
+
     extensions.forEach((extension) => {
       NodeRouter.extensionPaths[extension].forEach((basePath) => {
         NodeRouter.allowedRoutes = NodeRouter.#updateAllowedRoutes(basePath, extension);
       });
     });
+  };
+
+  static #isLatestRoutes = () => {
+    const oneMinute = 60000;
+    return NodeRouter.registeredTime + oneMinute > Date.now();
   };
 
   static #updateAllowedRoutes = (basePath, extension) => {
