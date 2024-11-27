@@ -1,7 +1,5 @@
-cd ./server
-
-source ./node_setup_functions.sh
+source ./server/node_setup_functions.sh
 node_setup_dependencies
 
 echo -e "\n-- starting server ---\n"
-node server.js
+node ./server/server.js

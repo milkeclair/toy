@@ -1,11 +1,10 @@
 node_setup_dependencies() {
   if [ ! -f package.json ]; then
-    local old_dir="$PWD"
-    (cd .. && npm init es6 -y)
-    cd "$old_dir"
+    echo -e "\n-- creating package.json ---\n"
+    npm init es6 -y
   fi
 
-  local dirs=("../pure" ".")
+  local dirs=("./pure" "./server")
 
   for dir in "${dirs[@]}"; do
     for file in "$dir"/*.js; do
@@ -42,8 +41,6 @@ node_hp_install_package() {
   # !node_modules/$pkg || !npm search "$pkg"
   if [ ! -d "node_modules/$pkg" ] || ! npm search "$pkg" >/dev/null 2>&1; then
     echo -e "\n-- installing $pkg ---\n"
-    local old_dir="$PWD"
-    (cd .. && npm install "$pkg")
-    cd "$old_dir"
+    npm install "$pkg"
   fi
 }
