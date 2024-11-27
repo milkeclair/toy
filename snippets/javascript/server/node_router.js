@@ -1,11 +1,18 @@
 import fs from "node:fs";
+import path from "node:path";
 import NodeController from "./node_controller.js";
 
 export default class NodeRouter {
   static allowedRoutes = {
-    "/": "../compare_code.html",
-    "/favicon.ico": "./favicon.ico",
-    "/404": "./404.html.ejs",
+    "/": "./view/compare_code.html",
+    "/favicon.ico": "./view/favicon.ico",
+    "/404": "./view/404.html.ejs",
+  };
+
+  static extensionPaths = {
+    ".html": ["./view/"],
+    ".css": ["./assets/css/"],
+    ".js": ["../pure/"],
   };
 
   static handle = (req, res) => {
@@ -28,13 +35,32 @@ export default class NodeRouter {
 
   static #registerRoutes = (extensions) => {
     extensions.forEach((extension) => {
-      const files = fs.readdirSync("../").filter((file) => file.includes(extension));
-      NodeRouter.allowedRoutes = files.reduce((routes, file) => {
-        const path = extension === ".html" ? `/${file.replace(extension, "")}` : `/${file}`;
-        routes[path] = `../${file}`;
-        return routes;
-      }, NodeRouter.allowedRoutes);
+      NodeRouter.extensionPaths[extension].forEach((basePath) => {
+        NodeRouter.allowedRoutes = NodeRouter.#updateAllowedRoutes(basePath, extension);
+      });
     });
+  };
+
+  static #updateAllowedRoutes = (basePath, extension) => {
+    const files = NodeRouter.#extractTargetFiles(basePath, extension);
+    return files.reduce((routes, file) => {
+      const route = NodeRouter.#formatRoute(file, extension);
+      routes[route] = path.resolve(basePath, file);
+      return routes;
+    }, NodeRouter.allowedRoutes);
+  };
+
+  static #extractTargetFiles = (basePath, extension) => {
+    const fullPath = path.resolve(basePath);
+    return fs.readdirSync(fullPath).filter((file) => file.endsWith(extension));
+  };
+
+  static #formatRoute = (path, extension) => {
+    return extension === ".html" ? `/${NodeRouter.#removeExtension(path, extension)}` : `/${path}`;
+  };
+
+  static #removeExtension = (path, extension) => {
+    return path.replace(extension, "");
   };
 
   static #isBadRequest = (req) => {
