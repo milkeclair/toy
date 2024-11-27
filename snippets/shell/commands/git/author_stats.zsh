@@ -38,6 +38,8 @@ git_author_stats() {
   done
 }
 
+# helper
+
 git_hp_print_author_logs() {
   local red='\033[0;31m'
   local green='\033[0;32m'
