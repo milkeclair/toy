@@ -6,6 +6,7 @@
     - `camelize.js`: camelize kebab or snake
     - `dig_nested_keys.js`: dig nested keys in object
     - `index.js`: entry point
+    - `logger.js`: logging colorize message
   - **server**
     - `app.js`: creation and activation server
     - `node_controller.js`: controller for server
