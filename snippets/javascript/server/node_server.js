@@ -40,7 +40,11 @@ export default class NodeServer {
   #createServer = () => {
     return createNodeServer((request, response) => {
       if (!this.#hasExtension(request.url)) {
-        Logger.info(`Starting ${request.method.toUpperCase()}, url: ${request.url}`);
+        Logger.info(
+          `Starting ${request.method.toUpperCase()}, url: ${
+            request.url
+          }, ip: ${this.#extractIpAddress(request)}`
+        );
       }
 
       this.router.handle(request, response);
@@ -56,5 +60,9 @@ export default class NodeServer {
 
   #hasExtension = (url) => {
     return this.renderer.mimeTypes[url.split(".").pop()];
+  };
+
+  #extractIpAddress = (req) => {
+    return req.headers["x-forwarded-for"] || req.socket.remoteAddress || null;
   };
 }
