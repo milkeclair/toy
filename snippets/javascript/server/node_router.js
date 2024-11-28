@@ -17,18 +17,14 @@ export default class NodeRouter {
   handle = (req, res) => {
     this.#registerRoutes([".html", ".ejs", ".css", ".js"]);
 
-    if (this.#isBadRequest(req)) {
-      this.controller.action.badRequest(res);
-    } else if (this.#isNotFound(req)) {
-      this.controller.action.notFound(req, res);
-    } else if (this.#isAppIcon(req)) {
-      this.controller.action.appIcon(req, res);
-    } else if (this.#isScript(req)) {
-      this.controller.action.script(req, res);
-    } else {
-      const actionName = this.#getAction(req);
-      this.controller.action[actionName](req, res);
-    }
+    const action = this.controller.action;
+    if (this.#isBadRequest(req)) return action.badRequest(res);
+    if (this.#isNotFound(req)) return action.notFound(req, res);
+    if (this.#isAppIcon(req)) return action.appIcon(req, res);
+    if (this.#isScript(req)) return action.script(req, res);
+
+    const actionName = this.#getAction(req);
+    action[actionName](req, res);
   };
 
   // private
