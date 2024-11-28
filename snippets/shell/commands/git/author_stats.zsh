@@ -5,6 +5,17 @@ git_author_stats() {
   exclude_dirs=("node_modules")
   echo -e "exclude_exts: ${exclude_exts[*]}\nexclude_dirs: ${exclude_dirs[*]}\n"
 
+  # 22, 12, 12, 12, 12
+  echo "┌──────────────────────┬────────────┬────────────┬────────────┬────────────┐"
+  echo "│ author               │ commit     │ add        │ delete     │ total      │"
+  echo "├──────────────────────┼────────────┼────────────┼────────────┼────────────┤"
+  git_hp_author_rows
+  echo "└──────────────────────┴────────────┴────────────┴────────────┴────────────┘"
+}
+
+# helper
+
+git_hp_author_rows() {
   local authors=($(git_hp_get_author_names))
   # example: ("drumcan smith" "dr mince") -> ("drumcan_smith" "dr_mince")
   local formatted_authors=($(git_hp_get_author_names | sed 's/ /_/g'))
@@ -31,14 +42,16 @@ git_author_stats() {
     # example: author_name commit: 100 add: 1000 delete: 1000 total: 2000
     git_hp_print_author_logs "$current_author" "$commit_count" "$inserted" "$deleted" "$total"
 
+    if [[ ${#authors[@]} != $index && ${#authors[@]} != 1 ]]; then
+      echo "├──────────────────────┼────────────┼────────────┼────────────┼────────────┤"
+    fi
+
     # setup for next
     previous_commits=$commit_count
     previous_lines=($commits)
     index=$((index + 1))
   done
 }
-
-# helper
 
 git_hp_print_author_logs() {
   local red='\033[0;31m'
@@ -54,9 +67,9 @@ git_hp_print_author_logs() {
   local total=$5
 
   # %-20s: ljust 20 for string
-  # %-5d: ljust 5 for digit
-  # example: author_name commit: 100 add: 1000 delete: 1000 total: 2000
-  printf "%-20s commit: ${orange}%-5d${creset} add: ${green}%-7d${creset} delete: ${red}%-7d${creset} total: ${purple}%-7d${creset}\n" "$author" "$commit_count" "$inserted" "$deleted" "$total"
+  # %-10d: ljust 5 for digit
+  # example: │ author_name │ commit: 100 │ add: 1000 │ delete: 1000 │ total: 2000 │
+  printf "│ %-20s │ ${orange}%-10d${creset} │ ${green}%-10d${creset} │ ${red}%-10d${creset} │ ${purple}%-10d${creset} │\n" "$author" "$commit_count" "$inserted" "$deleted" "$total"
 }
 
 git_hp_sum_lines() {

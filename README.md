@@ -37,5 +37,5 @@
       - `perm.zsh`: change directory and inner directories permission to me
       - `reload.zsh`: reload .zshrc
     - **git**
-      - `author_stats.zsh`: show all authors commited count, add lines, delete lines, and total lines
+      - `author_stats.zsh`: show all authors commited stats with table format
       - `current_branch.zsh`: if inside work tree then show current branch
