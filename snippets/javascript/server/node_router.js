@@ -103,7 +103,7 @@ export default class NodeRouter {
 
   static #isBadRequest = (req) => {
     // ../ or ..\ or ..$
-    const hasParentRegexp = new RegExp(/^(\.\.(\/|\\|$))/);
+    const hasParentRegexp = new RegExp(/(\.\.(\/|\\|$))/);
     return req.method !== "GET" || req.url.match(hasParentRegexp);
   };
 
