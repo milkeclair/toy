@@ -1,3 +1,5 @@
+import { camelize } from "../pure/camelize.js";
+
 import fs from "node:fs";
 import path from "node:path";
 import NodeServer from "./node_server.js";
@@ -10,7 +12,7 @@ export default class NodeRouter {
 
   static handle = (req, res) => {
     NodeRouter.#setup();
-    NodeRouter.#registerRoutes([".html", ".css", ".js"]);
+    NodeRouter.#registerRoutes([".html", ".ejs", ".css", ".js"]);
 
     if (NodeRouter.#isBadRequest(req)) {
       NodeController.Action.badRequest(res);
@@ -21,7 +23,8 @@ export default class NodeRouter {
     } else if (NodeRouter.#isScript(req)) {
       NodeController.Action.script(req, res);
     } else {
-      NodeController.Action.page(req, res);
+      const actionName = NodeRouter.#getAction(req);
+      NodeController.Action[actionName](req, res);
     }
   };
 
@@ -37,13 +40,14 @@ export default class NodeRouter {
     const home = NodeServer.appHome;
 
     NodeRouter.allowedRoutes = {
-      "/": `${home}/view/compare_code.html`,
+      "/": `${home}/view/compare_code.ejs`,
       "/favicon.ico": `${home}/assets/favicon.ico`,
-      "/404": `${home}/view/404.html.ejs`,
+      "/404": `${home}/view/404.ejs`,
     };
 
     NodeRouter.extensionPaths = {
       ".html": [`${home}/view/`],
+      ".ejs": [`${home}/view/`],
       ".css": [`${home}/assets/css/`],
       ".js": [`${home.replace(/\/server$/, "")}/pure/`],
     };
@@ -94,11 +98,26 @@ export default class NodeRouter {
   };
 
   static #formatRoute = (path, extension) => {
-    return extension === ".html" ? `/${NodeRouter.#removeExtension(path, extension)}` : `/${path}`;
+    if (extension === ".html" || extension === ".ejs") {
+      return `/${NodeRouter.#removeExtension(path)}`;
+    } else {
+      return `/${path}`;
+    }
   };
 
-  static #removeExtension = (path, extension) => {
-    return path.replace(extension, "");
+  static #removeExtension = (path) => {
+    return path.split(".")[0];
+  };
+
+  static #extractEndFromPath = (path) => {
+    return path.split("/").pop();
+  };
+
+  static #getAction = (req) => {
+    const fullPath = NodeRouter.allowedRoutes[req.url];
+    const targetFilePath = NodeRouter.#extractEndFromPath(fullPath);
+    const camelized = camelize(targetFilePath);
+    return NodeRouter.#removeExtension(camelized);
   };
 
   static #isBadRequest = (req) => {
@@ -116,6 +135,6 @@ export default class NodeRouter {
   };
 
   static #isScript = (req) => {
-    return req.url.includes(".js");
+    return req.url.endsWith(".js");
   };
 }

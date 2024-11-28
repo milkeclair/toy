@@ -1,25 +1,20 @@
 import fs from "node:fs";
 import ejs from "ejs";
 import NodeRouter from "./node_router.js";
+import NodeServer from "./node_server.js";
 
 export default class NodeRenderer {
   static mimeTypes = {
     html: "text/html",
+    ejs: "text/html",
     css: "text/css",
     js: "text/javascript",
     png: "image/png",
     ico: "image/x-icon",
   };
 
-  static render = (url) => {
-    return NodeRenderer.#renderView(NodeRouter.allowedRoutes[url]);
-  };
-
-  static renderNotFound = (message) => {
-    return ejs.render(
-      fs.readFileSync(NodeRouter.allowedRoutes["/404"], "utf-8"),
-      { message }
-    );
+  static render = (url, data = {}) => {
+    return NodeRenderer.#renderView(NodeRouter.allowedRoutes[url], data);
   };
 
   static isNotFoundView = (view) => {
@@ -28,11 +23,16 @@ export default class NodeRenderer {
 
   // private
 
-  static #renderView = (path) => {
+  static #renderView = (path, data = {}) => {
+    data = { ...data, appHome: NodeServer.appHome, message: data.message || "" };
     try {
-      return fs.readFileSync(path, "utf-8");
-    } catch {
-      return NodeRenderer.renderNotFound(`${path} not found`);
+      if (path.endsWith(".ejs")) {
+        return ejs.render(fs.readFileSync(path, "utf-8"), data);
+      } else {
+        return fs.readFileSync(path, "utf-8");
+      }
+    } catch (error) {
+      return ejs.render(fs.readFileSync(NodeRouter.allowedRoutes["/404"], "utf-8"), data);
     }
   };
 }
