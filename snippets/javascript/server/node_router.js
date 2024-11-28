@@ -60,6 +60,7 @@ export default class NodeRouter {
         this.allowedRoutes = await this.#updateAllowedRoutes(basePath, extension);
       }
     }
+    this.registeredTime = Date.now();
     console.log("[info] Allowed routes updated.");
   };
 
