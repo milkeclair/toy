@@ -1,28 +1,32 @@
 # コード置き場
 
-- **ruby**
-  - **pure**
-    - `compare_code.rb`: for develop
-    - `async_await.rb`: concurrent with thread
-    - `debounce.rb`: debounce with thread
-    - `time_converter_from_seconds.rb`: learned closure
-    - `multi_byte_ljust.rb`: left just for multiple byte string
 - **javascript**
   - `server.sh`: start a server to check js
   - **pure**
+    - `camelize.js`: camelize kebab or snake
     - `dig_nested_keys.js`: dig nested keys in object
+    - `index.js`: entry point
   - **server**
     - `app.js`: creation and activation server
-    - `node_server.js`: http server
     - `node_controller.js`: controller for server
     - `node_renderer.js`: view renderer
     - `node_router.js`: routing for server
+    - `node_server.js`: http server
     - `node_setup_functions.sh`: helper for server setup
     - **assets**
       - **css**
     - **view**
-      - `404.html.ejs`: not found page
-      - `compare_code.html`: for check js in browser
+      - `404.ejs`: not found page
+      - `compare_code.ejs`: for check js in browser
+      - **partial**
+        - `_head.ejs`: metadata
+- **ruby**
+  - **pure**
+    - `async_await.rb`: concurrent with thread
+    - `compare_code.rb`: for develop
+    - `debounce.rb`: debounce with thread
+    - `multi_byte_ljust.rb`: left just for multiple byte string
+    - `time_converter_from_seconds.rb`: learned closure
 - **shell**
   - `.zshrc`: zshrc
   - `bash_command.zsh`: add util command for bash
