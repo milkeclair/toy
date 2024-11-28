@@ -1,10 +1,27 @@
 node_setup_dependencies() {
+  local dirs=("$@")
+
   if [ ! -f package.json ]; then
     echo -e "\n-- creating package.json ---\n"
     npm init es6 -y
+
+    echo -e "\n-- installing nodemon ---\n"
+    node_hp_install_nodemon
   fi
 
-  local dirs=("./pure" "./server")
+  node_hp_install_packages "${dirs[@]}"
+}
+
+# helper
+
+node_hp_install_nodemon() {
+  local start_command="nodemon -e js,ejs,html,css,scss ./server/app.js"
+  npm install nodemon
+  jq '.scripts.start = $start_command' --arg start_command "$start_command" package.json >tmp && mv tmp package.json
+}
+
+node_hp_install_packages() {
+  local dirs=("$@")
 
   for dir in "${dirs[@]}"; do
     for file in "$dir"/*.js; do
@@ -18,8 +35,6 @@ node_setup_dependencies() {
     done
   done
 }
-
-# helper
 
 node_hp_extract_packages() {
   local file=$1
