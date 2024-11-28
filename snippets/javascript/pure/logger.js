@@ -1,30 +1,22 @@
 import { styleText } from "node:util";
 
 export default class Logger {
-  static info(message, { color = "white", before = false, after = false, timestamp = true } = {}) {
-    Logger.#p("info", message, color, before, after, timestamp);
+  static info(message, options = {}) {
+    Logger.#p("info", message, { ...options });
   }
 
-  static warn(message, { color = "yellow", before = false, after = false, timestamp = true } = {}) {
-    Logger.#p("warn", message, color, before, after, timestamp);
+  static warn(message, options = {}) {
+    Logger.#p("warn", message, { color: "yellow", ...options });
   }
 
-  static error(message, { color = "red", before = false, after = false, timestamp = true } = {}) {
-    Logger.#p("error", message, color, before, after, timestamp);
+  static error(message, options = {}) {
+    Logger.#p("error", message, { color: "red", ...options });
   }
 
   static returnable = {
-    info: (message, { color = "white", before = false, after = false, timestamp = true } = {}) => {
-      Logger.#p("info", message, color, before, after, timestamp, true);
-    },
-
-    warn: (message, { color = "yellow", before = false, after = false, timestamp = true } = {}) => {
-      Logger.#p("warn", message, color, before, after, timestamp, true);
-    },
-
-    error: (message, { color = "red", before = false, after = false, timestamp = true } = {}) => {
-      Logger.#p("error", message, color, before, after, timestamp, true);
-    },
+    info: (message, options = {}) => Logger.info(message, { ...options, returnable: true }),
+    warn: (message, options = {}) => Logger.warn(message, { ...options, returnable: true }),
+    error: (message, options = {}) => Logger.error(message, { ...options, returnable: true }),
   };
 
   constructor() {
@@ -36,15 +28,20 @@ export default class Logger {
 
   // private
 
-  static #p = (level, message, color, before, after, timestamp, returnable = false) => {
+  static #p(
+    level,
+    message,
+    { color = "white", timestamp = true, lineBreak = "", returnable = false }
+  ) {
     const time = new Date().toLocaleString("sv-SE");
     if (timestamp) message = `${time} - ${message}`;
 
     let text = styleText(color, `[${level}] ${message}`);
-    if (before) text = `\n${text}`;
-    if (after) text = `${text}\n`;
+    if (lineBreak === "before") text = `\n${text}`;
+    if (lineBreak === "after") text = `${text}\n`;
+    if (lineBreak === "both") text = `\n${text}\n`;
 
     if (returnable) return text;
     console.log(text);
-  };
+  }
 }

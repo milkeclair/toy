@@ -21,9 +21,9 @@ export default class NodeServer {
   activate = () => {
     this.server.listen(this.#port, this.#hostname, () => {
       Logger.info(`Server running at http://${this.#hostname}:${this.#port}/`, {
-        before: true,
+        lineBreak: "before",
       });
-      Logger.info(`Press Ctrl+C to stop the server.`, { after: true });
+      Logger.info(`Press Ctrl+C to stop the server.`, { lineBreak: "after" });
     });
 
     this.#listenExit();
