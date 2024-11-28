@@ -55,7 +55,8 @@ export default class NodeServer {
   };
 
   #hasExtension = (url) => {
-    return this.renderer.mimeTypes[url.split(".").pop()];
+    const ext = url.split(".").pop();
+    return !!this.renderer.mimeTypes[ext];
   };
 
   #message = {
