@@ -39,7 +39,9 @@ export default class NodeServer {
 
   #createServer = () => {
     return createNodeServer((request, response) => {
-      Logger.info(`Starting ${request.method.toUpperCase()}, url: ${request.url}`);
+      if (!this.#hasExtension(request.url)) {
+        Logger.info(`Starting ${request.method.toUpperCase()}, url: ${request.url}`);
+      }
 
       this.router.handle(request, response);
     });
@@ -50,5 +52,9 @@ export default class NodeServer {
       console.log("\nGoodbye!");
       process.exit();
     });
+  };
+
+  #hasExtension = (url) => {
+    return this.renderer.mimeTypes[url.split(".").pop()];
   };
 }
