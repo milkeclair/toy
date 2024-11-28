@@ -5,6 +5,10 @@ export default class Logger {
     Logger.#p("info", message, { ...options });
   }
 
+  static ok(message, options = {}) {
+    Logger.#p("ok", message, { color: "green", ...options });
+  }
+
   static warn(message, options = {}) {
     Logger.#p("warn", message, { color: "yellow", ...options });
   }
@@ -15,12 +19,14 @@ export default class Logger {
 
   static returnable = {
     info: (message, options = {}) => Logger.info(message, { ...options, returnable: true }),
+    ok: (message, options = {}) => Logger.ok(message, { ...options, returnable: true }),
     warn: (message, options = {}) => Logger.warn(message, { ...options, returnable: true }),
     error: (message, options = {}) => Logger.error(message, { ...options, returnable: true }),
   };
 
   constructor() {
     this.info = Logger.info;
+    this.ok = Logger.ok;
     this.warn = Logger.warn;
     this.error = Logger.error;
     this.returnable = Logger.returnable;
