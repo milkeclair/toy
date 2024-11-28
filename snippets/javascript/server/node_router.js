@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { camelize } from "../pure/camelize.js";
+import Logger from "../pure/logger.js";
 
 export default class NodeRouter {
   allowedRoutes = {};
@@ -55,13 +56,13 @@ export default class NodeRouter {
     }
 
     this.registeredTime = Date.now();
-    console.log("[info] Updating allowed routes...");
+    Logger.info("Updating allowed routes...");
     for (const extension of extensions) {
       for (const basePath of this.extensionPaths[extension]) {
         this.allowedRoutes = await this.#updateAllowedRoutes(basePath, extension);
       }
     }
-    console.log("[info] Allowed routes updated.");
+    Logger.info("Allowed routes updated.");
   };
 
   #isLatestRoutes = () => {
@@ -92,7 +93,7 @@ export default class NodeRouter {
       if (error.message.includes("no such file or directory")) {
         return [];
       } else {
-        console.log(`[error] ${error.message}`);
+        Logger.error(error.message);
       }
     }
   };

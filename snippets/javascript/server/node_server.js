@@ -1,4 +1,5 @@
 import { createServer as createNodeServer } from "node:http";
+import Logger from "../pure/logger.js";
 import NodeRouter from "./node_router.js";
 import NodeController from "./node_controller.js";
 import NodeRenderer from "./node_renderer.js";
@@ -19,8 +20,10 @@ export default class NodeServer {
 
   activate = () => {
     this.server.listen(this.#port, this.#hostname, () => {
-      console.log(`\n[info] Server running at http://${this.#hostname}:${this.#port}/`);
-      console.log("[info] Press Ctrl+C to stop the server.\n");
+      Logger.info(`Server running at http://${this.#hostname}:${this.#port}/`, {
+        before: true,
+      });
+      Logger.info(`Press Ctrl+C to stop the server.`, { after: true });
     });
 
     this.#listenExit();
@@ -36,7 +39,7 @@ export default class NodeServer {
 
   #createServer = () => {
     return createNodeServer((request, response) => {
-      console.log(`[info] Starting ${request.method.toUpperCase()}, url: ${request.url}`);
+      Logger.info(`Starting ${request.method.toUpperCase()}, url: ${request.url}`);
 
       this.router.handle(request, response);
     });
