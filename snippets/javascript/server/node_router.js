@@ -49,16 +49,18 @@ export default class NodeRouter {
     };
   };
 
-  #registerRoutes = (extensions) => {
+  #registerRoutes = async (extensions) => {
     if (this.#isLatestRoutes()) {
       return;
     }
 
-    extensions.forEach((extension) => {
-      this.extensionPaths[extension].forEach((basePath) => {
-        this.allowedRoutes = this.#updateAllowedRoutes(basePath, extension);
-      });
-    });
+    console.log("[info] Updating allowed routes...");
+    for (const extension of extensions) {
+      for (const basePath of this.extensionPaths[extension]) {
+        this.allowedRoutes = await this.#updateAllowedRoutes(basePath, extension);
+      }
+    }
+    console.log("[info] Allowed routes updated.");
   };
 
   #isLatestRoutes = () => {
@@ -71,8 +73,8 @@ export default class NodeRouter {
     return this.registeredTime + oneMinute > Date.now();
   };
 
-  #updateAllowedRoutes = (basePath, extension) => {
-    const files = this.#extractTargetFiles(basePath, extension);
+  #updateAllowedRoutes = async (basePath, extension) => {
+    const files = await this.#extractTargetFiles(basePath, extension);
     return files.reduce((routes, file) => {
       const route = this.#formatRoute(file, extension);
       routes[route] = path.resolve(basePath, file);
@@ -80,10 +82,11 @@ export default class NodeRouter {
     }, this.allowedRoutes);
   };
 
-  #extractTargetFiles = (basePath, extension) => {
+  #extractTargetFiles = async (basePath, extension) => {
     const fullPath = path.resolve(basePath);
     try {
-      return fs.readdirSync(fullPath).filter((file) => file.endsWith(extension));
+      const files = await fs.promises.readdir(fullPath);
+      return files.filter((file) => file.endsWith(extension));
     } catch (error) {
       if (error.message.includes("no such file or directory")) {
         return [];
