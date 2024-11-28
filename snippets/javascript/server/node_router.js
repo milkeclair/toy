@@ -1,23 +1,15 @@
 import fs from "node:fs";
 import path from "node:path";
+import NodeServer from "./node_server.js";
 import NodeController from "./node_controller.js";
 
 export default class NodeRouter {
-  static allowedRoutes = {
-    "/": "./view/compare_code.html",
-    "/favicon.ico": "./view/favicon.ico",
-    "/404": "./view/404.html.ejs",
-  };
-
+  static allowedRoutes = {};
+  static extensionPaths = {};
   static registeredTime = null;
 
-  static extensionPaths = {
-    ".html": ["./view/"],
-    ".css": ["./assets/css/"],
-    ".js": ["../pure/"],
-  };
-
   static handle = (req, res) => {
+    NodeRouter.#setup();
     NodeRouter.#registerRoutes([".html", ".css", ".js"]);
 
     if (NodeRouter.#isBadRequest(req)) {
@@ -35,8 +27,29 @@ export default class NodeRouter {
 
   // private
 
+  static #setup = () => {
+    if (
+      Object.keys(NodeRouter.allowedRoutes).length > 0 &&
+      Object.keys(NodeRouter.extensionPaths).length > 0
+    ) {
+      return;
+    }
+    const home = NodeServer.appHome;
+
+    NodeRouter.allowedRoutes = {
+      "/": `${home}/view/compare_code.html`,
+      "/favicon.ico": `${home}/assets/favicon.ico`,
+      "/404": `${home}/view/404.html.ejs`,
+    };
+
+    NodeRouter.extensionPaths = {
+      ".html": [`${home}/view/`],
+      ".css": [`${home}/assets/css/`],
+      ".js": [`${home.replace(/\/server$/, "")}/pure/`],
+    };
+  };
+
   static #registerRoutes = (extensions) => {
-    NodeRouter.registeredTime ??= Date.now();
     if (NodeRouter.#isLatestRoutes()) {
       return;
     }
@@ -49,6 +62,11 @@ export default class NodeRouter {
   };
 
   static #isLatestRoutes = () => {
+    if (!NodeRouter.registeredTime) {
+      NodeRouter.registeredTime = Date.now();
+      return false;
+    }
+
     const oneMinute = 60000;
     return NodeRouter.registeredTime + oneMinute > Date.now();
   };
@@ -64,7 +82,15 @@ export default class NodeRouter {
 
   static #extractTargetFiles = (basePath, extension) => {
     const fullPath = path.resolve(basePath);
-    return fs.readdirSync(fullPath).filter((file) => file.endsWith(extension));
+    try {
+      return fs.readdirSync(fullPath).filter((file) => file.endsWith(extension));
+    } catch (error) {
+      if (error.message.includes("no such file or directory")) {
+        return [];
+      } else {
+        console.log(`[error] ${error.message}`);
+      }
+    }
   };
 
   static #formatRoute = (path, extension) => {

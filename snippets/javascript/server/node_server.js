@@ -2,14 +2,13 @@ import { createServer as createNodeServer } from "node:http";
 import NodeRouter from "./node_router.js";
 
 export default class NodeServer {
+  static appHome = import.meta.dirname;
   static #hostname = "localhost";
   static #port = 3000;
 
   static createServer = () => {
     return createNodeServer((request, response) => {
-      console.log(
-        `[info] Starting ${request.method.toUpperCase()}, url: ${request.url}`
-      );
+      console.log(`[info] Starting ${request.method.toUpperCase()}, url: ${request.url}`);
 
       NodeRouter.handle(request, response);
     });
@@ -17,11 +16,7 @@ export default class NodeServer {
 
   static activate = (server) => {
     server.listen(NodeServer.#port, NodeServer.#hostname, () => {
-      console.log(
-        `[info] Server running at http://${NodeServer.#hostname}:${
-          NodeServer.#port
-        }/`
-      );
+      console.log(`[info] Server running at http://${NodeServer.#hostname}:${NodeServer.#port}/`);
       console.log("[info] Press Ctrl+C to stop the server.");
     });
 
