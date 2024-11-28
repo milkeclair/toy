@@ -102,7 +102,9 @@ export default class NodeRouter {
   };
 
   static #isBadRequest = (req) => {
-    return req.method !== "GET";
+    // ../ or ..\ or ..$
+    const hasParentRegexp = new RegExp(/^(\.\.(\/|\\|$))/);
+    return req.method !== "GET" || req.url.match(hasParentRegexp);
   };
 
   static #isNotFound = (req) => {
