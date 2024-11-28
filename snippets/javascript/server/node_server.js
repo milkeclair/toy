@@ -20,10 +20,10 @@ export default class NodeServer {
 
   activate = () => {
     this.server.listen(this.#port, this.#hostname, () => {
-      Logger.info(`Server running at http://${this.#hostname}:${this.#port}/`, {
+      Logger.info(this.#message.startedServer(), {
         lineBreak: "before",
       });
-      Logger.info(`Press Ctrl+C to stop the server.`, { lineBreak: "after" });
+      Logger.info(this.#message.howToStop(), { lineBreak: "after" });
     });
 
     this.#listenExit();
@@ -40,7 +40,7 @@ export default class NodeServer {
   #createServer = () => {
     return createNodeServer((request, response) => {
       if (!this.#hasExtension(request.url)) {
-        Logger.info(this.#receivedRequestMessage(request));
+        Logger.info(this.#message.receivedRequest(request));
       }
 
       this.router.handle(request, response);
@@ -49,7 +49,7 @@ export default class NodeServer {
 
   #listenExit = () => {
     process.on("SIGINT", () => {
-      console.log("\nGoodbye!");
+      console.log(this.#message.exited());
       process.exit();
     });
   };
@@ -58,10 +58,24 @@ export default class NodeServer {
     return this.renderer.mimeTypes[url.split(".").pop()];
   };
 
-  #receivedRequestMessage = (request) => {
-    return `Starting ${request.method.toUpperCase()}, url: ${
-      request.url
-    }, ip: ${this.#extractIpAddress(request)}`;
+  #message = {
+    startedServer: () => {
+      return `Server running at http://${this.#hostname}:${this.#port}/`;
+    },
+
+    howToStop: () => {
+      return `Press Ctrl+C to stop the server.`;
+    },
+
+    exited: () => {
+      return "\nGoodbye!";
+    },
+
+    receivedRequest: (request) => {
+      return `Starting ${request.method.toUpperCase()}, url: ${
+        request.url
+      }, ip: ${this.#extractIpAddress(request)}`;
+    },
   };
 
   #extractIpAddress = (req) => {
