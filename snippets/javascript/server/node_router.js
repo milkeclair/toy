@@ -18,10 +18,10 @@ export default class NodeRouter {
     this.#registerRoutes([".html", ".ejs", ".css", ".js"]);
 
     const action = this.controller.action;
-    if (this.#isBadRequest(req)) return action.badRequest(res);
-    if (this.#isNotFound(req)) return action.notFound(req, res);
-    if (this.#isAppIcon(req)) return action.appIcon(req, res);
-    if (this.#isScript(req)) return action.script(req, res);
+    if (this.#assert.badRequest(req)) return action.badRequest(res);
+    if (this.#assert.notFound(req)) return action.notFound(req, res);
+    if (this.#assert.appIcon(req)) return action.appIcon(req, res);
+    if (this.#assert.script(req)) return action.script(req, res);
 
     const actionName = this.#getAction(req);
     action[actionName](req, res);
@@ -42,7 +42,7 @@ export default class NodeRouter {
       ".html": [`${home}/view/`],
       ".ejs": [`${home}/view/`],
       ".css": [`${home}/assets/css/`],
-      ".js": [`${home.replace(/\/server$/, "")}/pure/`],
+      ".js": [`${this.#processPath.parent(home)}/pure/`],
     };
   };
 
@@ -83,7 +83,7 @@ export default class NodeRouter {
   #extractTargetFiles = async (basePath, extension) => {
     const fullPath = path.resolve(basePath);
     try {
-      const files = await fs.promises.readdir(fullPath);
+      const files = await this.#processPath.read(fullPath);
       return files.filter((file) => file.endsWith(extension));
     } catch (error) {
       if (error.message.includes("no such file or directory")) {
@@ -96,42 +96,54 @@ export default class NodeRouter {
 
   #formatRoute = (path, extension) => {
     if (extension === ".html" || extension === ".ejs") {
-      return `/${this.#removeExtension(path)}`;
+      return `/${this.#processPath.removeExtension(path)}`;
     } else {
       return `/${path}`;
     }
   };
 
-  #removeExtension = (path) => {
-    return path.split(".")[0];
-  };
-
-  #extractEndFromPath = (path) => {
-    return path.split("/").pop();
-  };
-
   #getAction = (req) => {
     const fullPath = this.allowedRoutes[req.url];
-    const targetFilePath = this.#extractEndFromPath(fullPath);
+    const targetFilePath = this.#processPath.extractEndFrom(fullPath);
     const camelized = camelize(targetFilePath);
-    return this.#removeExtension(camelized);
+    return this.#processPath.removeExtension(camelized);
   };
 
-  #isBadRequest = (req) => {
-    // ../ or ..\ or ..$
-    const hasParentRegexp = new RegExp(/(\.\.(\/|\\|$))/);
-    return req.method !== "GET" || req.url.match(hasParentRegexp);
+  #processPath = {
+    parent: (path) => {
+      return path.replace(/\/server$/, "");
+    },
+
+    read: async (path) => {
+      return fs.promises.readdir(path);
+    },
+
+    removeExtension: (path) => {
+      return path.split(".")[0];
+    },
+
+    extractEndFrom: (path) => {
+      return path.split("/").pop();
+    },
   };
 
-  #isNotFound = (req) => {
-    return !this.allowedRoutes[req.url] || req.url === "/404";
-  };
+  #assert = {
+    badRequest: (req) => {
+      // ../ or ..\ or ..$
+      const hasParentRegexp = new RegExp(/(\.\.(\/|\\|$))/);
+      return req.method !== "GET" || req.url.match(hasParentRegexp);
+    },
 
-  #isAppIcon = (req) => {
-    return req.url === "/favicon.ico";
-  };
+    notFound: (req) => {
+      return !this.allowedRoutes[req.url] || req.url === "/404";
+    },
 
-  #isScript = (req) => {
-    return req.url.endsWith(".js");
+    appIcon: (req) => {
+      return req.url === "/favicon.ico";
+    },
+
+    script: (req) => {
+      return req.url.endsWith(".js");
+    },
   };
 }
