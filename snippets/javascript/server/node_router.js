@@ -54,13 +54,13 @@ export default class NodeRouter {
       return;
     }
 
+    this.registeredTime = Date.now();
     console.log("[info] Updating allowed routes...");
     for (const extension of extensions) {
       for (const basePath of this.extensionPaths[extension]) {
         this.allowedRoutes = await this.#updateAllowedRoutes(basePath, extension);
       }
     }
-    this.registeredTime = Date.now();
     console.log("[info] Allowed routes updated.");
   };
 
