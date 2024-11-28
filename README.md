@@ -12,7 +12,7 @@
   - **pure**
     - `dig_nested_keys.js`: dig nested keys in object
   - **server**
-    - `server.js`: creation and activation server
+    - `app.js`: creation and activation server
     - `node_server.js`: http server
     - `node_controller.js`: controller for server
     - `node_renderer.js`: view renderer
