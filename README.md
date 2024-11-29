@@ -4,7 +4,7 @@
   - `server.sh`: start a server to check js
   - **pure**
     - `camelize.js`: camelize kebab or snake
-    - `dig_nested_key.js`: dig nested keys in object
+    - `dig_nested_keys.js`: dig nested keys in object
     - `has_any_key.js`: check if object has any key?
     - `index.js`: entry point
     - `logger.js`: logging colorize message
