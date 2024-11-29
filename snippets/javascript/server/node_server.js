@@ -22,9 +22,7 @@ export default class NodeServer {
 
   activate = () => {
     this.server.listen(this.#port, this.#hostname, () => {
-      Logger.info(this.#message.startedServer(), {
-        lineBreak: "before",
-      });
+      Logger.info(this.#message.startedServer(), { lineBreak: "before" });
       Logger.info(this.#message.howToStop(), { lineBreak: "after" });
     });
 
@@ -85,7 +83,6 @@ export default class NodeServer {
   };
 
   #setupMiddlewares = ({ req, res }) => {
-    this.middleware.addAllowedOrigin("http://localhost:3000");
     this.middleware.use("origin");
     this.middleware.use("methods");
     this.middleware.overrideResponseEnd({ req, res });
