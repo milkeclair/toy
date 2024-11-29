@@ -8,15 +8,19 @@ import NodeLogger from "./node_logger.js";
 import NodeWarden from "./node_warden.js";
 
 export default class NodeServer {
-  constructor() {
-    this.config = new NodeConfig();
-    this.router = new NodeRouter();
-    this.controller = new NodeController();
-    this.renderer = new NodeRenderer();
-    this.middleware = new NodeMiddleware();
-    this.logger = new NodeLogger();
-    this.warden = new NodeWarden();
+  #moduleClasses = {
+    server: NodeServer,
+    config: NodeConfig,
+    router: NodeRouter,
+    controller: NodeController,
+    renderer: NodeRenderer,
+    middleware: NodeMiddleware,
+    logger: NodeLogger,
+    warden: NodeWarden,
+  };
 
+  constructor() {
+    this.#initializes();
     this.#activates();
     this.server = this.#createServer();
   }
@@ -32,17 +36,17 @@ export default class NodeServer {
 
   // private
 
-  #activates = () => {
-    const { config, router, controller, renderer, logger, warden } = this;
-    const modules = { server: this, config, router, controller, renderer, logger, warden };
+  #initializes = () => {
+    const modules = this.#rejectThis(this.#moduleClasses);
+    Object.entries(modules).forEach(([name, module]) => {
+      this[name] = new module();
+    });
+  };
 
-    this.config.activate(modules);
-    this.router.activate(modules);
-    this.controller.activate(modules);
-    this.renderer.activate(modules);
-    this.middleware.activate(modules);
-    this.logger.activate(modules);
-    this.warden.activate(modules);
+  #activates = () => {
+    Object.values(this.#modules({ rejectThis: true })).forEach((module) => {
+      module.activate(this.#modules());
+    });
   };
 
   #createServer = () => {
@@ -73,5 +77,26 @@ export default class NodeServer {
     this.middleware.use("origin");
     this.middleware.use("methods");
     this.middleware.overrideResponseEnd({ req, res });
+  };
+
+  #rejectThis = (modules) => {
+    const { server, ...rest } = modules;
+    return rest;
+  };
+
+  #modules = ({ rejectThis = false } = {}) => {
+    const modules = {
+      server: this,
+      config: this.config,
+      router: this.router,
+      controller: this.controller,
+      renderer: this.renderer,
+      middleware: this.middleware,
+      logger: this.logger,
+      warden: this.warden,
+    };
+
+    if (!rejectThis) return modules;
+    return this.#rejectThis(modules);
   };
 }

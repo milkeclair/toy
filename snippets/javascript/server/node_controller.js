@@ -1,8 +1,6 @@
 export default class NodeController {
   activate = ({ server, renderer, logger }) => {
-    this.server = server;
-    this.renderer = renderer;
-    this.logger = logger;
+    Object.assign(this, { server, renderer, logger });
     this.action = this.#setupActions();
   };
 

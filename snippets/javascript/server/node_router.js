@@ -8,11 +8,7 @@ export default class NodeRouter {
   registeredTime = null;
 
   activate = ({ config, server, controller, logger, warden }) => {
-    this.config = config;
-    this.server = server;
-    this.controller = controller;
-    this.logger = logger;
-    this.warden = warden;
+    Object.assign(this, { config, server, controller, logger, warden });
     this.config.draws();
   };
 
