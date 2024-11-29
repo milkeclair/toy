@@ -30,6 +30,10 @@ export default class NodeController {
         this.action.deliver(req, res, "js");
       },
 
+      css: (req, res) => {
+        this.action.deliver(req, res, "css");
+      },
+
       deliver: (req, res, mimeType, data = {}) => {
         const content = this.renderer.render(req.url, data);
         this.#setStatusCode(req, res, content);

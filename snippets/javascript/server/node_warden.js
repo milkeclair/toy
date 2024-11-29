@@ -19,6 +19,10 @@ export default class NodeWarden {
     script: (req) => {
       return req.url.endsWith(".js");
     },
+
+    css: (req) => {
+      return req.url.endsWith(".css") || req.url.endsWith(".scss");
+    },
   };
 
   // private

@@ -26,6 +26,7 @@ export default class NodeConfig {
         ".html": [`${home}/view/`],
         ".ejs": [`${home}/view/`],
         ".css": [`${home}/assets/css/`],
+        ".scss": [`${home}/assets/css/`],
         ".js": [`${homeParent}/pure/`],
       },
     });

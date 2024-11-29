@@ -25,6 +25,7 @@ export default class NodeRouter {
     if (this.warden.validate.notFound(req)) return action.notFound(req, res);
     if (this.warden.validate.appIcon(req)) return action.appIcon(req, res);
     if (this.warden.validate.script(req)) return action.script(req, res);
+    if (this.warden.validate.css(req)) return action.css(req, res);
 
     const actionName = this.#getAction(req);
     action[actionName](req, res);
@@ -83,6 +84,8 @@ export default class NodeRouter {
   #formatRoute = (path, extension) => {
     if (extension === ".html" || extension === ".ejs") {
       return `/${this.#processPath.removeExtension(path)}`;
+    } else if (extension === ".css" || extension === ".scss") {
+      return `/assets/css/${path}`;
     } else {
       return `/${path}`;
     }
@@ -111,5 +114,9 @@ export default class NodeRouter {
 
   #isNotDirectory = (message) => {
     return message.includes("no such file or directory");
+  };
+
+  #isAsset = (url) => {
+    return url.includes("/assets/");
   };
 }
