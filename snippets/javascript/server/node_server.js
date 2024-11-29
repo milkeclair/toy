@@ -22,6 +22,7 @@ export default class NodeServer {
   constructor() {
     this.#initializes();
     this.#activates();
+    this.config.setup();
     this.server = this.#createServer();
   }
 

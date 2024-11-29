@@ -1,13 +1,18 @@
 export default class NodeConfig {
-  host = "localhost";
-  port = 3000;
-  appHome = import.meta.dirname;
-
   activate = ({ router }) => {
     this.router = router;
   };
 
-  draws = () => {
+  setup = () => {
+    this.host = "localhost";
+    this.port = 3000;
+    this.appHome = import.meta.dirname;
+    this.allowed = {
+      origins: ["http://localhost:3000"],
+      ips: ["::1", "127.0.0.1"],
+      methods: ["GET", "POST", "PUT", "DELETE"],
+    };
+
     const home = this.appHome;
     const homeParent = this.#processPath.parent(home);
 

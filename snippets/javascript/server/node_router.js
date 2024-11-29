@@ -9,12 +9,11 @@ export default class NodeRouter {
 
   activate = ({ config, server, controller, logger, warden }) => {
     Object.assign(this, { config, server, controller, logger, warden });
-    this.config.draws();
   };
 
   draw = ({ routes, extensions }) => {
-    this.allowedRoutes = routes;
-    this.extensionPaths = extensions;
+    this.allowedRoutes = { ...this.allowedRoutes, ...routes };
+    this.extensionPaths = { ...this.extensionPaths, ...extensions };
   };
 
   handle = async (req, res) => {

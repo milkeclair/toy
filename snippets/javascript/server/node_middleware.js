@@ -1,10 +1,8 @@
 export default class NodeMiddleware {
-  #allowedOrigins = ["http://localhost:3000"];
-  #allowedIps = ["::1", "127.0.0.1"];
-  #allowedMethods = ["GET", "POST", "PUT", "DELETE"];
   #uses = [];
 
-  activate = ({ renderer }) => {
+  activate = ({ config, renderer }) => {
+    this.config = config;
     this.renderer = renderer;
   };
 
@@ -19,9 +17,9 @@ export default class NodeMiddleware {
   };
 
   addAllowedOrigin = (origin) => {
-    if (this.#allowedOrigins.includes(origin)) return;
+    if (this.config.allowed.origins.includes(origin)) return;
 
-    this.#allowedOrigins.push(origin);
+    this.config.allowed.origins.push(origin);
   };
 
   use = (middleware) => {
@@ -46,15 +44,15 @@ export default class NodeMiddleware {
     origin: ({ req, res }) => {
       const origin = req.headers.origin;
       const ip = this.#extractIpAddress(req);
-      if (this.#allowedOrigins.includes(origin)) {
+      if (this.config.allowed.origins.includes(origin)) {
         res.setHeader("Access-Control-Allow-Origin", origin);
-      } else if (this.#allowedIps.includes(ip)) {
+      } else if (this.config.allowed.ips.includes(ip)) {
         res.setHeader("Access-Control-Allow-Origin", "*");
       }
     },
 
     methods: ({ res }) => {
-      res.setHeader("Access-Control-Allow-Methods", this.#allowedMethods.join(","));
+      res.setHeader("Access-Control-Allow-Methods", this.config.allowed.methods.join(","));
     },
 
     type: ({ res, type }) => {
