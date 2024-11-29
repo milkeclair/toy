@@ -11,6 +11,7 @@
   - **server**
     - `app.js`: creation and activation server
     - `node_controller.js`: controller for server
+    - `node_logger.js`: logging server details
     - `node_middleware.js`: middleware for before response end
     - `node_renderer.js`: view renderer
     - `node_router.js`: routing for server
