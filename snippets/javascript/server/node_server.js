@@ -3,6 +3,7 @@ import Logger from "../pure/logger.js";
 import NodeRouter from "./node_router.js";
 import NodeController from "./node_controller.js";
 import NodeRenderer from "./node_renderer.js";
+import NodeMiddleware from "./node_middleware.js";
 
 export default class NodeServer {
   #hostname = "localhost";
@@ -13,6 +14,7 @@ export default class NodeServer {
     this.router = new NodeRouter();
     this.controller = new NodeController();
     this.renderer = new NodeRenderer();
+    this.middleware = new NodeMiddleware();
 
     this.#activates();
     this.server = this.#createServer();
@@ -35,10 +37,13 @@ export default class NodeServer {
     this.router.activate({ server: this, controller: this.controller });
     this.controller.activate({ server: this, renderer: this.renderer });
     this.renderer.activate({ server: this, router: this.router });
+    this.middleware.activate({ renderer: this.renderer });
   };
 
   #createServer = () => {
     return createNodeServer((request, response) => {
+      this.#setupMiddlewares({ req: request, res: response });
+
       if (!this.#hasExtension(request.url)) {
         Logger.info(this.#message.receivedRequest(request));
       }
@@ -77,6 +82,13 @@ export default class NodeServer {
         request.url
       }, ip: ${this.#extractIpAddress(request)}`;
     },
+  };
+
+  #setupMiddlewares = ({ req, res }) => {
+    this.middleware.addAllowedOrigin("http://localhost:3000");
+    this.middleware.use("origin");
+    this.middleware.use("methods");
+    this.middleware.overrideResponseEnd({ req, res });
   };
 
   #extractIpAddress = (req) => {

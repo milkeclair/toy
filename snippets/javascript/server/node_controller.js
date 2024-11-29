@@ -11,25 +11,24 @@ export default class NodeController {
 
   #setupActions = () => {
     return {
+      // base
+
       badRequest: (res) => {
         Logger.warn("Bad Request, returning 400");
         res.statusCode = 400;
-        res.setHeader("Content-Type", "text/plain");
-        res.end("400 Bad Request");
+        res.end("400 Bad Request", "plain");
       },
 
       notFound: (req, res) => {
         const view = this.renderer.render(req.url, { message: `${req.url} not found` });
         this.#setStatusCode(req, res, view);
-        this.#setHeader(res, "html");
-        res.end(view);
+        res.end(view, "html");
       },
 
       deliver: (req, res, mimeType, data = {}) => {
         const content = this.renderer.render(req.url, data);
         this.#setStatusCode(req, res, content);
-        this.#setHeader(res, mimeType);
-        res.end(content);
+        res.end(content, mimeType);
       },
 
       appIcon: (req, res) => {
@@ -39,6 +38,8 @@ export default class NodeController {
       script: (req, res) => {
         this.action.deliver(req, res, "js");
       },
+
+      // html
 
       compareCode: (req, res) => {
         const data = { message: "Hello, world!" };
@@ -52,9 +53,5 @@ export default class NodeController {
     if (res.statusCode === 404) {
       Logger.warn(`Not Found: ${req.url}, returning 404`);
     }
-  };
-
-  #setHeader = (res, type) => {
-    res.setHeader("Content-Type", this.renderer.mimeTypes[type]);
   };
 }

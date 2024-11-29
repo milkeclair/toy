@@ -3,6 +3,7 @@ import ejs from "ejs";
 
 export default class NodeRenderer {
   mimeTypes = {
+    plain: "text/plain",
     html: "text/html",
     ejs: "text/html",
     css: "text/css",
