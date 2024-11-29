@@ -1,6 +1,6 @@
 export default class NodeMiddleware {
   #allowedOrigins = ["http://localhost:3000"];
-  #allowedIps = ["::1"];
+  #allowedIps = ["::1", "127.0.0.1"];
   #allowedMethods = ["GET", "POST", "PUT", "DELETE"];
   #uses = [];
 
