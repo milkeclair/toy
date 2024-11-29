@@ -17,6 +17,7 @@
     - `node_router.js`: routing for server
     - `node_server.js`: http server
     - `node_setup_functions.sh`: helper for server setup
+    - `node_warden.js`: request warden
     - **assets**
       - **css**
     - **view**

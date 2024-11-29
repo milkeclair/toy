@@ -7,10 +7,11 @@ export default class NodeRouter {
   extensionPaths = {};
   registeredTime = null;
 
-  activate = ({ server, controller, logger }) => {
+  activate = ({ server, controller, logger, warden }) => {
     this.server = server;
     this.controller = controller;
     this.logger = logger;
+    this.warden = warden;
     this.#setup();
   };
 
@@ -18,10 +19,10 @@ export default class NodeRouter {
     this.#registerRoutes([".html", ".ejs", ".css", ".js"]);
 
     const action = this.controller.action;
-    if (this.#assert.badRequest(req)) return action.badRequest(res);
-    if (this.#assert.notFound(req)) return action.notFound(req, res);
-    if (this.#assert.appIcon(req)) return action.appIcon(req, res);
-    if (this.#assert.script(req)) return action.script(req, res);
+    if (this.warden.validate.illegal(req)) return action.badRequest(res);
+    if (this.warden.validate.notFound(req)) return action.notFound(req, res);
+    if (this.warden.validate.appIcon(req)) return action.appIcon(req, res);
+    if (this.warden.validate.script(req)) return action.script(req, res);
 
     const actionName = this.#getAction(req);
     action[actionName](req, res);
@@ -119,26 +120,6 @@ export default class NodeRouter {
 
     extractEndFrom: (path) => {
       return path.split("/").pop();
-    },
-  };
-
-  #assert = {
-    badRequest: (req) => {
-      // ../ or ..\ or ..$
-      const hasParentRegexp = new RegExp(/(\.\.(\/|\\|$))/);
-      return req.method !== "GET" || req.url.match(hasParentRegexp);
-    },
-
-    notFound: (req) => {
-      return !this.allowedRoutes[req.url] || req.url === "/404";
-    },
-
-    appIcon: (req) => {
-      return req.url === "/favicon.ico";
-    },
-
-    script: (req) => {
-      return req.url.endsWith(".js");
     },
   };
 

@@ -4,6 +4,7 @@ import NodeController from "./node_controller.js";
 import NodeRenderer from "./node_renderer.js";
 import NodeMiddleware from "./node_middleware.js";
 import NodeLogger from "./node_logger.js";
+import NodeWarden from "./node_warden.js";
 
 export default class NodeServer {
   #hostname = "localhost";
@@ -16,6 +17,7 @@ export default class NodeServer {
     this.renderer = new NodeRenderer();
     this.middleware = new NodeMiddleware();
     this.logger = new NodeLogger();
+    this.warden = new NodeWarden();
 
     this.#activates();
     this.server = this.#createServer();
@@ -33,10 +35,13 @@ export default class NodeServer {
   // private
 
   #activates = () => {
-    this.router.activate({ server: this, controller: this.controller, logger: this.logger });
-    this.controller.activate({ server: this, renderer: this.renderer, logger: this.logger });
-    this.renderer.activate({ server: this, router: this.router });
-    this.middleware.activate({ renderer: this.renderer });
+    const { router, controller, renderer, logger, warden } = this;
+
+    this.router.activate({ server: this, controller, logger, warden });
+    this.controller.activate({ server: this, renderer, logger });
+    this.renderer.activate({ server: this, router });
+    this.middleware.activate({ renderer });
+    this.warden.activate({ router });
   };
 
   #createServer = () => {
