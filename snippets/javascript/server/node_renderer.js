@@ -28,15 +28,24 @@ export default class NodeRenderer {
   // private
 
   #renderView = (path, data = {}) => {
-    data = { ...data, appHome: this.server.appHome, message: data.message || "" };
+    data = {
+      ...data,
+      appHome: this.server.appHome,
+      message: data.message || "",
+    };
+
     try {
-      if (path.endsWith(".ejs")) {
-        return ejs.render(fs.readFileSync(path, "utf-8"), data);
-      } else {
-        return fs.readFileSync(path, "utf-8");
-      }
+      const content = this.#read(path);
+      if (path.endsWith(".ejs")) return ejs.render(content, data);
+
+      return content;
     } catch (error) {
-      return ejs.render(fs.readFileSync(this.router.allowedRoutes["/404"], "utf-8"), data);
+      const content = this.#read(this.router.allowedRoutes["/404"]);
+      return ejs.render(content, data);
     }
+  };
+
+  #read = (path) => {
+    return fs.readFileSync(path, "utf-8");
   };
 }
