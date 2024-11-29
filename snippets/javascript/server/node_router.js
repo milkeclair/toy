@@ -47,9 +47,7 @@ export default class NodeRouter {
   };
 
   #registerRoutes = async (extensions) => {
-    if (this.#isLatestRoutes()) {
-      return;
-    }
+    if (this.#isLatestRoutes()) return;
 
     this.registeredTime = Date.now();
     Logger.info("Updating allowed routes...");
@@ -86,11 +84,8 @@ export default class NodeRouter {
       const files = await this.#processPath.read(fullPath);
       return files.filter((file) => file.endsWith(extension));
     } catch (error) {
-      if (error.message.includes("no such file or directory")) {
-        return [];
-      } else {
-        Logger.error(error.message);
-      }
+      if (this.#isNotDirectory(error.message)) return [];
+      Logger.error(error.message);
     }
   };
 
@@ -145,5 +140,9 @@ export default class NodeRouter {
     script: (req) => {
       return req.url.endsWith(".js");
     },
+  };
+
+  #isNotDirectory = (message) => {
+    return message.includes("no such file or directory");
   };
 }
