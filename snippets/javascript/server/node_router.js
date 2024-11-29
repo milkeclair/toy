@@ -7,16 +7,23 @@ export default class NodeRouter {
   extensionPaths = {};
   registeredTime = null;
 
-  activate = ({ server, controller, logger, warden }) => {
+  activate = ({ config, server, controller, logger, warden }) => {
+    this.config = config;
     this.server = server;
     this.controller = controller;
     this.logger = logger;
     this.warden = warden;
-    this.#setup();
+    this.config.draws();
   };
 
-  handle = (req, res) => {
-    this.#registerRoutes([".html", ".ejs", ".css", ".js"]);
+  draw = ({ routes, extensions }) => {
+    this.allowedRoutes = routes;
+    this.extensionPaths = extensions;
+  };
+
+  handle = async (req, res) => {
+    await this.#handleFirstRequest();
+    this.#registerRoutes(Object.keys(this.extensionPaths));
 
     const action = this.controller.action;
     if (this.warden.validate.illegal(req)) return action.badRequest(res);
@@ -30,21 +37,9 @@ export default class NodeRouter {
 
   // private
 
-  #setup = () => {
-    const home = this.server.appHome;
-
-    this.allowedRoutes = {
-      "/": `${home}/view/compare_code.ejs`,
-      "/favicon.ico": `${home}/assets/favicon.ico`,
-      "/404": `${home}/view/404.ejs`,
-    };
-
-    this.extensionPaths = {
-      ".html": [`${home}/view/`],
-      ".ejs": [`${home}/view/`],
-      ".css": [`${home}/assets/css/`],
-      ".js": [`${this.#processPath.parent(home)}/pure/`],
-    };
+  #handleFirstRequest = async () => {
+    if (this.registeredTime) return;
+    await this.#registerRoutes(Object.keys(this.extensionPaths));
   };
 
   #registerRoutes = async (extensions) => {
@@ -106,10 +101,6 @@ export default class NodeRouter {
   };
 
   #processPath = {
-    parent: (path) => {
-      return path.replace(/\/server$/, "");
-    },
-
     read: async (path) => {
       return fs.promises.readdir(path);
     },

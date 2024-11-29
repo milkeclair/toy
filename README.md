@@ -10,6 +10,7 @@
     - `logger.js`: logging colorize message
   - **server**
     - `app.js`: creation and activation server
+    - `node_config.js`: server config
     - `node_controller.js`: controller for server
     - `node_logger.js`: logging server details
     - `node_middleware.js`: middleware for before response end

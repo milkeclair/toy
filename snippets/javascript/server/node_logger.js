@@ -5,13 +5,19 @@ export default class NodeLogger {
     this.logger = new Logger();
   }
 
+  activate = ({ config }) => {
+    this.config = config;
+  };
+
   info = {
     custom: (message) => {
       this.logger.info(message);
     },
 
-    serverStarted: (host, port) => {
-      this.logger.info(`Server running at http://${host}:${port}`, { lineBreak: "before" });
+    serverStarted: () => {
+      this.logger.info(`Server running at http://${this.config.host}:${this.config.port}`, {
+        lineBreak: "before",
+      });
     },
 
     howToStop: () => {

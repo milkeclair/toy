@@ -30,7 +30,7 @@ export default class NodeRenderer {
   #renderView = (path, data = {}) => {
     data = {
       ...data,
-      appHome: this.server.appHome,
+      appHome: this.server.config.appHome,
       message: data.message || "",
     };
 

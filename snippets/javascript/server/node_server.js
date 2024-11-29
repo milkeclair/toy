@@ -1,4 +1,5 @@
 import { createServer as createNodeServer } from "node:http";
+import NodeConfig from "./node_config.js";
 import NodeRouter from "./node_router.js";
 import NodeController from "./node_controller.js";
 import NodeRenderer from "./node_renderer.js";
@@ -7,11 +8,8 @@ import NodeLogger from "./node_logger.js";
 import NodeWarden from "./node_warden.js";
 
 export default class NodeServer {
-  #hostname = "localhost";
-  #port = 3000;
-
   constructor() {
-    this.appHome = import.meta.dirname;
+    this.config = new NodeConfig();
     this.router = new NodeRouter();
     this.controller = new NodeController();
     this.renderer = new NodeRenderer();
@@ -24,8 +22,8 @@ export default class NodeServer {
   }
 
   activate = () => {
-    this.server.listen(this.#port, this.#hostname, () => {
-      this.logger.info.serverStarted(this.#hostname, this.#port);
+    this.server.listen(this.config.port, this.config.host, () => {
+      this.logger.info.serverStarted(this.config.host, this.config.port);
       this.logger.info.howToStop();
     });
 
@@ -35,13 +33,16 @@ export default class NodeServer {
   // private
 
   #activates = () => {
-    const { router, controller, renderer, logger, warden } = this;
+    const { config, router, controller, renderer, logger, warden } = this;
+    const modules = { server: this, config, router, controller, renderer, logger, warden };
 
-    this.router.activate({ server: this, controller, logger, warden });
-    this.controller.activate({ server: this, renderer, logger });
-    this.renderer.activate({ server: this, router });
-    this.middleware.activate({ renderer });
-    this.warden.activate({ router });
+    this.config.activate(modules);
+    this.router.activate(modules);
+    this.controller.activate(modules);
+    this.renderer.activate(modules);
+    this.middleware.activate(modules);
+    this.logger.activate(modules);
+    this.warden.activate(modules);
   };
 
   #createServer = () => {
