@@ -1,16 +1,16 @@
 import fs from "node:fs";
 import path from "node:path";
 import { camelize } from "../pure/camelize.js";
-import Logger from "../pure/logger.js";
 
 export default class NodeRouter {
   allowedRoutes = {};
   extensionPaths = {};
   registeredTime = null;
 
-  activate = ({ server, controller }) => {
+  activate = ({ server, controller, logger }) => {
     this.server = server;
     this.controller = controller;
+    this.logger = logger;
     this.#setup();
   };
 
@@ -50,13 +50,13 @@ export default class NodeRouter {
     if (this.#isLatestRoutes()) return;
 
     this.registeredTime = Date.now();
-    Logger.info("Updating allowed routes...");
+    this.logger.info.updatingAllowedRoutes();
     for (const extension of extensions) {
       for (const basePath of this.extensionPaths[extension]) {
         this.allowedRoutes = await this.#updateAllowedRoutes(basePath, extension);
       }
     }
-    Logger.info("Allowed routes updated.");
+    this.logger.info.allowedRoutesUpdated();
   };
 
   #isLatestRoutes = () => {
@@ -85,7 +85,7 @@ export default class NodeRouter {
       return files.filter((file) => file.endsWith(extension));
     } catch (error) {
       if (this.#isNotDirectory(error.message)) return [];
-      Logger.error(error.message);
+      this.logger.error.custom(error.message);
     }
   };
 

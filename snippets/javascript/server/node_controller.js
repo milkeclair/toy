@@ -1,9 +1,8 @@
-import Logger from "../pure/logger.js";
-
 export default class NodeController {
-  activate = ({ server, renderer }) => {
+  activate = ({ server, renderer, logger }) => {
     this.server = server;
     this.renderer = renderer;
+    this.logger = logger;
     this.action = this.#setupActions();
   };
 
@@ -14,7 +13,7 @@ export default class NodeController {
       // base
 
       badRequest: (res) => {
-        Logger.warn("Bad Request, returning 400");
+        this.logger.warn.badRequest();
         res.statusCode = 400;
         res.end("400 Bad Request", "plain");
       },
@@ -51,7 +50,7 @@ export default class NodeController {
   #setStatusCode = (req, res, view) => {
     res.statusCode = this.renderer.isNotFoundView(view) ? 404 : 200;
     if (res.statusCode === 404) {
-      Logger.warn(`Not Found: ${req.url}, returning 404`);
+      this.logger.warn.notFound(req);
     }
   };
 }

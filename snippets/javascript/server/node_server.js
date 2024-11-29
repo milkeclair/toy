@@ -1,9 +1,9 @@
 import { createServer as createNodeServer } from "node:http";
-import Logger from "../pure/logger.js";
 import NodeRouter from "./node_router.js";
 import NodeController from "./node_controller.js";
 import NodeRenderer from "./node_renderer.js";
 import NodeMiddleware from "./node_middleware.js";
+import NodeLogger from "./node_logger.js";
 
 export default class NodeServer {
   #hostname = "localhost";
@@ -15,6 +15,7 @@ export default class NodeServer {
     this.controller = new NodeController();
     this.renderer = new NodeRenderer();
     this.middleware = new NodeMiddleware();
+    this.logger = new NodeLogger();
 
     this.#activates();
     this.server = this.#createServer();
@@ -22,8 +23,8 @@ export default class NodeServer {
 
   activate = () => {
     this.server.listen(this.#port, this.#hostname, () => {
-      Logger.info(this.#message.startedServer(), { lineBreak: "before" });
-      Logger.info(this.#message.howToStop(), { lineBreak: "after" });
+      this.logger.info.serverStarted(this.#hostname, this.#port);
+      this.logger.info.howToStop();
     });
 
     this.#listenExit();
@@ -32,8 +33,8 @@ export default class NodeServer {
   // private
 
   #activates = () => {
-    this.router.activate({ server: this, controller: this.controller });
-    this.controller.activate({ server: this, renderer: this.renderer });
+    this.router.activate({ server: this, controller: this.controller, logger: this.logger });
+    this.controller.activate({ server: this, renderer: this.renderer, logger: this.logger });
     this.renderer.activate({ server: this, router: this.router });
     this.middleware.activate({ renderer: this.renderer });
   };
@@ -43,7 +44,7 @@ export default class NodeServer {
       this.#setupMiddlewares({ req: request, res: response });
 
       if (!this.#hasExtension(request.url)) {
-        Logger.info(this.#message.receivedRequest(request));
+        this.logger.info.receivedRequest(request);
       }
 
       this.router.handle(request, response);
@@ -52,7 +53,7 @@ export default class NodeServer {
 
   #listenExit = () => {
     process.on("SIGINT", () => {
-      console.log(this.#message.exited());
+      this.logger.info.exited();
       process.exit();
     });
   };
@@ -62,33 +63,9 @@ export default class NodeServer {
     return !!this.renderer.mimeTypes[ext];
   };
 
-  #message = {
-    startedServer: () => {
-      return `Server running at http://${this.#hostname}:${this.#port}/`;
-    },
-
-    howToStop: () => {
-      return `Press Ctrl+C to stop the server.`;
-    },
-
-    exited: () => {
-      return "\nGoodbye!";
-    },
-
-    receivedRequest: (request) => {
-      return `Starting ${request.method.toUpperCase()}, url: ${
-        request.url
-      }, ip: ${this.#extractIpAddress(request)}`;
-    },
-  };
-
   #setupMiddlewares = ({ req, res }) => {
     this.middleware.use("origin");
     this.middleware.use("methods");
     this.middleware.overrideResponseEnd({ req, res });
-  };
-
-  #extractIpAddress = (req) => {
-    return req.headers["x-forwarded-for"] || req.socket.remoteAddress || null;
   };
 }
