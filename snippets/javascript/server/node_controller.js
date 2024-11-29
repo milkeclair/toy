@@ -24,18 +24,18 @@ export default class NodeController {
         res.end(view, "html");
       },
 
-      deliver: (req, res, mimeType, data = {}) => {
-        const content = this.renderer.render(req.url, data);
-        this.#setStatusCode(req, res, content);
-        res.end(content, mimeType);
-      },
-
       appIcon: (req, res) => {
         this.action.deliver(req, res, "ico");
       },
 
       script: (req, res) => {
         this.action.deliver(req, res, "js");
+      },
+
+      deliver: (req, res, mimeType, data = {}) => {
+        const content = this.renderer.render(req.url, data);
+        this.#setStatusCode(req, res, content);
+        res.end(content, mimeType);
       },
 
       // html
