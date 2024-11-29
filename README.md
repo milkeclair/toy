@@ -21,6 +21,7 @@
     - `node_warden.js`: request warden
     - **assets**
       - **css**
+        - `compare_code.css`: css
     - **view**
       - `404.ejs`: not found page
       - `compare_code.ejs`: for check js in browser
