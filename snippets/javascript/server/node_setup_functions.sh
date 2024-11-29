@@ -15,7 +15,7 @@ node_setup_dependencies() {
 # helper
 
 node_hp_install_nodemon() {
-  local start_command="nodemon -e js,ejs,html,css,scss ./server/app.js"
+  local start_command="nodemon -e js,ejs,html,css,scss --ignore 'node_modules/' ./server/app.js"
   npm install nodemon
   jq '.scripts.start = $start_command' --arg start_command "$start_command" package.json >tmp && mv tmp package.json
 }
