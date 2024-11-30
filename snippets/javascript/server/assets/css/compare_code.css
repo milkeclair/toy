@@ -1,3 +1,45 @@
+body {
+  position: relative;
+  padding: 50px 100px;
+  border: 2px solid black;
+
+  &::before {
+    content: "body";
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    padding: 0 5px;
+    color: white;
+    background-color: black;
+  }
+}
+
 div {
-  color: red;
+  position: relative;
+  border: 2px solid red;
+
+  &::before {
+    content: "div";
+    position: absolute;
+    top: -25px;
+    left: -2px;
+    padding: 0 5px;
+    color: white;
+    background-color: red;
+  }
+}
+
+p {
+  position: relative;
+  border: 2px solid blue;
+
+  &::before {
+    content: "p";
+    position: absolute;
+    top: -25px;
+    left: -2px;
+    padding: 0 5px;
+    color: white;
+    background-color: blue;
+  }
 }
