@@ -115,8 +115,4 @@ export default class NodeRouter {
   #isNotDirectory = (message) => {
     return message.includes("no such file or directory");
   };
-
-  #isAsset = (url) => {
-    return url.includes("/assets/");
-  };
 }

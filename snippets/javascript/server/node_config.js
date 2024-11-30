@@ -14,14 +14,14 @@ export default class NodeConfig {
     };
 
     const home = this.appHome;
-    const homeParent = this.#processPath.parent(home);
-
+    const homeParent = this.appHome.replace(/\/server$/, "");
     this.router.draw({
       routes: {
         "/": `${home}/view/compare_code.ejs`,
         "/favicon.ico": `${home}/assets/favicon.ico`,
         "/404": `${home}/view/404.ejs`,
       },
+
       extensions: {
         ".html": [`${home}/view/`],
         ".ejs": [`${home}/view/`],
@@ -30,13 +30,5 @@ export default class NodeConfig {
         ".js": [`${homeParent}/pure/`],
       },
     });
-  };
-
-  // private
-
-  #processPath = {
-    parent: (path) => {
-      return path.replace(/\/server$/, "");
-    },
   };
 }
