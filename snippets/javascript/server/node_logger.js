@@ -24,10 +24,10 @@ export default class NodeLogger {
       this.logger.info("Press Ctrl+C to stop the server", { lineBreak: "after" });
     },
 
-    receivedRequest: (request) => {
-      const method = request.method.toUpperCase();
-      const url = request.url;
-      const ip = this.#extractIpAddress(request);
+    receivedRequest: (req) => {
+      const method = req.method.toUpperCase();
+      const url = req.url;
+      const ip = this.#extractIpAddress(req);
       this.logger.info(`Starting ${method}, url: ${url}, ip: ${ip}`);
     },
 
@@ -54,8 +54,8 @@ export default class NodeLogger {
       this.logger.warn(`Bad Request: returning 400`);
     },
 
-    notFound: (request) => {
-      this.logger.warn(`Not Found: ${request.url}, returning 404`);
+    notFound: (req) => {
+      this.logger.warn(`Not Found: ${req.url}, returning 404`);
     },
   };
 
