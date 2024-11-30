@@ -43,6 +43,14 @@ export default class NodeLogger {
     allowedRoutesUpdated: () => {
       this.logger.info("Allowed routes updated.");
     },
+
+    rendering: (url) => {
+      this.logger.info(`Rendering, url: ${url}`);
+    },
+
+    rendered: (url) => {
+      this.logger.info(`Rendered!, url: ${url}`);
+    },
   };
 
   warn = {
@@ -62,6 +70,10 @@ export default class NodeLogger {
   error = {
     custom: (message) => {
       this.logger.error(message);
+    },
+
+    cannotRender: (url) => {
+      this.logger.error(`Cannot render, url: ${url}`);
     },
   };
 

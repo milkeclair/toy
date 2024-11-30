@@ -1,4 +1,3 @@
-import fs from "node:fs";
 import path from "node:path";
 import { camelize } from "../pure/camelize.js";
 
@@ -7,8 +6,8 @@ export default class NodeRouter {
   extensionPaths = {};
   registeredTime = null;
 
-  activate = ({ config, server, controller, logger, warden }) => {
-    Object.assign(this, { config, server, controller, logger, warden });
+  activate = ({ config, server, controller, logger, warden, util }) => {
+    Object.assign(this, { config, server, controller, logger, warden, util });
   };
 
   draw = ({ routes, extensions }) => {
@@ -43,11 +42,13 @@ export default class NodeRouter {
 
     this.registeredTime = Date.now();
     this.logger.info.updatingAllowedRoutes();
+
     for (const extension of extensions) {
       for (const basePath of this.extensionPaths[extension]) {
         this.allowedRoutes = await this.#updateAllowedRoutes(basePath, extension);
       }
     }
+
     this.logger.info.allowedRoutesUpdated();
   };
 
@@ -63,17 +64,20 @@ export default class NodeRouter {
 
   #updateAllowedRoutes = async (basePath, extension) => {
     const files = await this.#extractTargetFiles(basePath, extension);
+
     return files.reduce((routes, file) => {
       const route = this.#formatRoute(file, extension);
       routes[route] = path.resolve(basePath, file);
+
       return routes;
     }, this.allowedRoutes);
   };
 
   #extractTargetFiles = async (basePath, extension) => {
     const fullPath = path.resolve(basePath);
+
     try {
-      const files = await this.#processPath.read(fullPath);
+      const files = await this.util.directory.asyncRead(fullPath);
       return files.filter((file) => file.endsWith(extension));
     } catch (error) {
       if (this.#isNotDirectory(error.message)) return [];
@@ -83,7 +87,7 @@ export default class NodeRouter {
 
   #formatRoute = (path, extension) => {
     if (extension === ".html" || extension === ".ejs") {
-      return `/${this.#processPath.removeExtension(path)}`;
+      return `/${this.util.url.removeExtension(path)}`;
     } else if (extension === ".css" || extension === ".scss") {
       return `/assets/css/${path}`;
     } else {
@@ -93,23 +97,10 @@ export default class NodeRouter {
 
   #getAction = (req) => {
     const fullPath = this.allowedRoutes[req.url];
-    const targetFilePath = this.#processPath.extractEndFrom(fullPath);
+    const targetFilePath = this.util.url.extractEnd(fullPath);
     const camelized = camelize(targetFilePath);
-    return this.#processPath.removeExtension(camelized);
-  };
 
-  #processPath = {
-    read: async (path) => {
-      return fs.promises.readdir(path);
-    },
-
-    removeExtension: (path) => {
-      return path.split(".")[0];
-    },
-
-    extractEndFrom: (path) => {
-      return path.split("/").pop();
-    },
+    return this.util.url.removeExtension(camelized);
   };
 
   #isNotDirectory = (message) => {

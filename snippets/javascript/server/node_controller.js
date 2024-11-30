@@ -17,25 +17,26 @@ export default class NodeController {
       },
 
       notFound: (req, res) => {
-        const view = this.renderer.render(req.url, { message: `${req.url} not found` });
+        const data = { message: `${req.url} not found` };
+        const view = this.renderer.render({ url: "/404", data });
         this.#setStatusCode(req, res, view);
         res.end(view, "html");
       },
 
       appIcon: (req, res) => {
-        this.action.deliver(req, res, "ico");
+        this.action.deliver({ req, res, mimeType: "ico" });
       },
 
       script: (req, res) => {
-        this.action.deliver(req, res, "js");
+        this.action.deliver({ req, res, mimeType: "js" });
       },
 
       css: (req, res) => {
-        this.action.deliver(req, res, "css");
+        this.action.deliver({ req, res, mimeType: "css" });
       },
 
-      deliver: (req, res, mimeType, data = {}) => {
-        const content = this.renderer.render(req.url, data);
+      deliver: ({ req, res, mimeType = "plain", data = {}, loggable = false }) => {
+        const content = this.renderer.render({ url: req.url, data, loggable });
         this.#setStatusCode(req, res, content);
         res.end(content, mimeType);
       },
@@ -44,7 +45,7 @@ export default class NodeController {
 
       compareCode: (req, res) => {
         const data = { message: "Hello, world!" };
-        this.action.deliver(req, res, "html", data);
+        this.action.deliver({ req, res, mimeType: "html", data, loggable: true });
       },
     };
   };

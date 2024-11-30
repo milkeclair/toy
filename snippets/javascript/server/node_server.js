@@ -6,6 +6,7 @@ import NodeRenderer from "./node_renderer.js";
 import NodeMiddleware from "./node_middleware.js";
 import NodeLogger from "./node_logger.js";
 import NodeWarden from "./node_warden.js";
+import NodeUtil from "./node_util.js";
 
 export default class NodeServer {
   #moduleClasses = {
@@ -17,6 +18,7 @@ export default class NodeServer {
     middleware: NodeMiddleware,
     logger: NodeLogger,
     warden: NodeWarden,
+    util: NodeUtil,
   };
 
   constructor() {
@@ -54,7 +56,7 @@ export default class NodeServer {
     return createNodeServer((request, response) => {
       this.#setupMiddlewares({ req: request, res: response });
 
-      if (!this.#hasExtension(request.url)) {
+      if (!this.util.url.hasExtension(request.url)) {
         this.logger.info.receivedRequest(request);
       }
 
@@ -67,11 +69,6 @@ export default class NodeServer {
       this.logger.info.exited();
       process.exit();
     });
-  };
-
-  #hasExtension = (url) => {
-    const ext = url.split(".").pop();
-    return !!this.renderer.mimeTypes[ext];
   };
 
   #setupMiddlewares = ({ req, res }) => {
@@ -95,6 +92,7 @@ export default class NodeServer {
       middleware: this.middleware,
       logger: this.logger,
       warden: this.warden,
+      util: this.util,
     };
 
     if (!rejectThis) return modules;

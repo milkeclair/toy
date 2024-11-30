@@ -1,9 +1,10 @@
 export default class NodeMiddleware {
   #uses = [];
 
-  activate = ({ config, renderer }) => {
+  activate = ({ config, renderer, util }) => {
     this.config = config;
     this.renderer = renderer;
+    this.util = util;
   };
 
   overrideResponseEnd = ({ req, res }) => {
@@ -43,7 +44,8 @@ export default class NodeMiddleware {
   setHeader = {
     origin: ({ req, res }) => {
       const origin = req.headers.origin;
-      const ip = this.#extractIpAddress(req);
+      const ip = this.util.request.extractIpAddress(req);
+
       if (this.config.allowed.origins.includes(origin)) {
         res.setHeader("Access-Control-Allow-Origin", origin);
       } else if (this.config.allowed.ips.includes(ip)) {
@@ -58,9 +60,5 @@ export default class NodeMiddleware {
     type: ({ res, type }) => {
       res.setHeader("Content-Type", this.renderer.mimeTypes[type]);
     },
-  };
-
-  #extractIpAddress = (req) => {
-    return req.headers["x-forwarded-for"] || req.socket.remoteAddress || null;
   };
 }

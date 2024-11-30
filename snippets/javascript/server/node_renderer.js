@@ -1,4 +1,3 @@
-import fs from "node:fs";
 import ejs from "ejs";
 
 export default class NodeRenderer {
@@ -12,13 +11,18 @@ export default class NodeRenderer {
     ico: "image/x-icon",
   };
 
-  activate = ({ server, router }) => {
+  activate = ({ server, router, logger, util }) => {
     this.server = server;
     this.router = router;
+    this.logger = logger;
+    this.util = util;
   };
 
-  render = (url, data = {}) => {
-    return this.#renderView(this.router.allowedRoutes[url], data);
+  render = ({ url, data = {}, loggable = false }) => {
+    const path = this.router.allowedRoutes[url];
+    const content = this.#renderView({ url, path, data, loggable });
+    if (loggable) this.logger.info.rendered(url);
+    return content;
   };
 
   isNotFoundView = (view) => {
@@ -27,7 +31,7 @@ export default class NodeRenderer {
 
   // private
 
-  #renderView = (path, data = {}) => {
+  #renderView = ({ url, path, data, loggable }) => {
     data = {
       ...data,
       appHome: this.server.config.appHome,
@@ -35,17 +39,16 @@ export default class NodeRenderer {
     };
 
     try {
-      const content = this.#read(path);
-      if (path.endsWith(".ejs")) return ejs.render(content, data);
+      if (loggable) this.logger.info.rendering(url);
+      const content = this.util.file.read(path);
 
+      if (path.endsWith(".ejs")) return ejs.render(content, data);
       return content;
     } catch (error) {
-      const content = this.#read(this.router.allowedRoutes["/404"]);
+      if (loggable) this.logger.error.cannotRender(url);
+
+      const content = this.util.file.read(this.router.allowedRoutes["/404"]);
       return ejs.render(content, data);
     }
-  };
-
-  #read = (path) => {
-    return fs.readFileSync(path, "utf-8");
   };
 }
