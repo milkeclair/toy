@@ -1,5 +1,4 @@
-/* reset */
-* {
+.ly_showContainer * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -13,49 +12,46 @@
     max-width: 100px;
     height: 23px;
     font-size: 16px;
+    font-weight: normal;
     padding: 0 5px;
     color: white;
   }
-}
 
-html {
-  border-color: gray;
-}
+  &.un_body {
+    margin: 20px;
+    padding: 50px 100px;
+    border-color: black;
 
-body {
-  margin: 20px;
-  padding: 50px 100px;
-  border-color: black;
-
-  &::before {
-    content: "body";
-    background-color: black;
+    &::before {
+      content: "body";
+      background-color: black;
+    }
   }
-}
 
-div {
-  border-color: red;
+  &.un_div {
+    border-color: red;
 
-  &::before {
-    content: "div";
-    background-color: red;
+    &::before {
+      content: "div";
+      background-color: red;
+    }
   }
-}
 
-h1 {
-  border-color: green;
+  &.un_h1 {
+    border-color: green;
 
-  &::before {
-    content: "h1";
-    background-color: green;
+    &::before {
+      content: "h1";
+      background-color: green;
+    }
   }
-}
 
-p {
-  border-color: blue;
+  &.un_p {
+    border-color: blue;
 
-  &::before {
-    content: "p";
-    background-color: blue;
+    &::before {
+      content: "p";
+      background-color: blue;
+    }
   }
 }
