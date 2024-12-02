@@ -41,6 +41,7 @@
   - `git_command.zsh`: add util command for git
   - **commands**
     - **bash**
+      - `memo.zsh`: manage memo
       - `perm.zsh`: change directory and inner directories permission to me
       - `reload.zsh`: reload .zshrc
     - **git**
