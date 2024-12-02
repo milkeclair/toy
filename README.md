@@ -1,49 +1,49 @@
 # コード置き場
 
 - **javascript**
-  - `server.sh`: start a server to check js
+  - `server.sh`: サーバーを起動
   - **pure**
-    - `camelize.js`: camelize kebab or snake
-    - `dig_nested_keys.js`: dig nested keys in object
-    - `has_any_key.js`: check if object has any key?
-    - `index.js`: entry point
-    - `logger.js`: logging colorize message
+    - `camelize.js`: ケバブケース、スネークケースをキャメルケースに変更
+    - `dig_nested_keys.js`: ネストされたキーにアクセス
+    - `has_any_key.js`: オブジェクトがキーを持っているか確認
+    - `index.js`: jsを読み込むエントリーポイント
+    - `logger.js`: いい感じのログを出力するconsole.logのラッパー
   - **server**
-    - `app.js`: creation and activation server
-    - `node_config.js`: server config
-    - `node_controller.js`: controller for server
-    - `node_logger.js`: logging server details
-    - `node_middleware.js`: middleware for before response end
-    - `node_renderer.js`: view renderer
-    - `node_router.js`: routing for server
-    - `node_server.js`: http server
-    - `node_setup_functions.sh`: helper for server setup
-    - `node_util.js`: utility methods
-    - `node_warden.js`: request warden
+    - `app.js`: サーバーの読み込み
+    - `node_config.js`: 設定
+    - `node_controller.js`: コントローラー
+    - `node_logger.js`: ログ出力
+    - `node_middleware.js`: response.endの前に任意の処理を追加
+    - `node_renderer.js`: ビューのレンダリング
+    - `node_router.js`: ルーティング
+    - `node_server.js`: サーバー
+    - `node_setup_functions.sh`: 依存関係の自動インストール
+    - `node_util.js`: 汎用処理
+    - `node_warden.js`: リクエストの検証
     - **assets**
       - **css**
         - `compare_code.css`: css
     - **view**
-      - `404.ejs`: not found page
-      - `compare_code.ejs`: for check js in browser
+      - `404.ejs`: 404ページ
+      - `compare_code.ejs`: jsの動作確認用ページ
       - **partial**
-        - `_head.ejs`: metadata
+        - `_head.ejs`: headタグの中身
 - **ruby**
   - **pure**
-    - `async_await.rb`: concurrent with thread
-    - `compare_code.rb`: for develop
-    - `debounce.rb`: debounce with thread
-    - `multi_byte_ljust.rb`: left just for multiple byte string
-    - `time_converter_from_seconds.rb`: learned closure
+    - `async_await.rb`: 並行処理
+    - `compare_code.rb`: 動作確認用
+    - `debounce.rb`: 並行処理を使ったdebounce機能
+    - `multi_byte_ljust.rb`: マルチバイト文字に対応したljust
+    - `time_converter_from_seconds.rb`: クロージャの勉強用
 - **shell**
-  - `.zshrc`: zshrc
-  - `bash_command.zsh`: add util command for bash
-  - `git_command.zsh`: add util command for git
+  - `.zshrc`: dotfile
+  - `bash_command.zsh`: bashの汎用関数用エントリーポイント
+  - `git_command.zsh`: gitの汎用関数用エントリーポイント
   - **commands**
     - **bash**
-      - `memo.zsh`: manage memo
-      - `perm.zsh`: change directory and inner directories permission to me
-      - `reload.zsh`: reload .zshrc
+      - `memo.zsh`: メモの管理
+      - `perm.zsh`: ディレクトリの権限を自分に変更
+      - `reload.zsh`: zshrcのリロード
     - **git**
-      - `author_stats.zsh`: show all authors commited stats with table format
-      - `current_branch.zsh`: if inside work tree then show current branch
+      - `author_stats.zsh`: author毎のコミット数、追加・削除行数を表形式で表示
+      - `current_branch.zsh`: 今いるブランチを表示
