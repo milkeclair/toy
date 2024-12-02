@@ -16,3 +16,12 @@ bash_memo() {
 
   code ~/memo/$file
 }
+
+_bash_memo_completions() {
+  local files=($(ls ~/memo))
+  _values \
+    "" \
+    "${files[@]}"
+}
+
+compdef _bash_memo_completions memo
