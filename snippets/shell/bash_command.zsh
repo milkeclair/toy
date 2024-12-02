@@ -9,3 +9,7 @@ reload() {
 perm() {
   bash_perm
 }
+
+memo() {
+  bash_memo "$@"
+}

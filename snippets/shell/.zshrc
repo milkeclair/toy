@@ -31,7 +31,7 @@ $ '
 
 # alias ------------------------------------------------------------------------
 alias ls="ls -a"
-alias code="sudo code"
+alias code="code --remote wsl+Ubuntu"
 alias be="bundle exec"
 alias berb="bundle exec ruby"
 alias pry="sudo pry"
