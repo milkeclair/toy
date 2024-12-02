@@ -9,7 +9,7 @@ bash_memo() {
 
   if [[ -z $file ]]; then
     file="memo.md"
-  elif [[ ! -f ~/memo/$file.md ]]; then
+  elif [[ ! -f ~/memo/$file.md || ! -f ~/memo/$file ]]; then
     touch ~/memo/$file.md
     file="$file.md"
   fi
