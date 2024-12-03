@@ -33,6 +33,7 @@
     - `async_await.rb`: 並行処理
     - `compare_code.rb`: 動作確認用
     - `debounce.rb`: 並行処理を使ったdebounce機能
+    - `fizz_buzz.rb`: fizz buzz
     - `multi_byte_ljust.rb`: マルチバイト文字に対応したljust
     - `time_converter_from_seconds.rb`: クロージャの勉強用
 - **shell**
