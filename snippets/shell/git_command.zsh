@@ -10,6 +10,9 @@ git() {
   "current")
     git_current_branch
     ;;
+  "plog")
+    git_pretty_log
+    ;;
   *)
     command git "$@"
     ;;

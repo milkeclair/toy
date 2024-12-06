@@ -1,4 +1,4 @@
-git_hp_pretty_log() {
+git_pretty_log() {
   local ftime='%y/%m/%d %R'
   local hash='%C(yellow)%h%Creset'
   local date='%C(green)%cd%Creset'
