@@ -13,6 +13,9 @@ git() {
   "plog")
     git_pretty_log
     ;;
+  "user")
+    git_user "$@"
+    ;;
   *)
     command git "$@"
     ;;
