@@ -16,6 +16,9 @@ git() {
   "user")
     git_user "$@"
     ;;
+  "commit")
+    git_commit "$@"
+    ;;
   *)
     command git "$@"
     ;;
