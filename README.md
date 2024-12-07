@@ -49,3 +49,4 @@
       - `author_stats.zsh`: author毎のコミット数、追加・削除行数を表形式で表示
       - `current_branch.zsh`: 今いるブランチを表示
       - `pretty_log.zsh`: いい感じのコミットログを表示
+      - `user_config.zsh`: ユーザー情報を表示、変更
