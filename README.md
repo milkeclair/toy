@@ -36,6 +36,7 @@
     - `fizz_buzz.rb`: fizz buzz
     - `multi_byte_ljust.rb`: マルチバイト文字に対応したljust
     - `time_converter_from_seconds.rb`: クロージャの勉強用
+    - `timer.rb`: タイマー
 - **shell**
   - `.zshrc`: dotfile
   - `bash_command.zsh`: bashの汎用関数用エントリーポイント
