@@ -3,6 +3,8 @@
 - **batch**
   - **util**
     - `padding_zero.bat`: ゼロ埋め
+  - **cloudflared**
+    - `setup_for_client.bat`:cloudflaredをインストール、トンネルに接続する(クライアント用)
 - **javascript**
   - `server.sh`: サーバーを起動
   - **pure**
