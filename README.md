@@ -1,5 +1,8 @@
 # コード置き場
 
+- **batch**
+  - **util**
+    - `padding_zero.bat`: ゼロ埋め
 - **javascript**
   - `server.sh`: サーバーを起動
   - **pure**
