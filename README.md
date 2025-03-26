@@ -37,18 +37,17 @@
     - `multi_byte_ljust.rb`: マルチバイト文字に対応したljust
     - `time_converter_from_seconds.rb`: クロージャの勉強用
     - `timer.rb`: タイマー
-- **shell**
+- **zsh**
   - `.zshrc`: dotfile
   - `bash_command.zsh`: bashの汎用関数用エントリーポイント
   - `git_command.zsh`: gitの汎用関数用エントリーポイント
-  - **commands**
-    - **bash**
-      - `memo.zsh`: メモの管理
-      - `perm.zsh`: ディレクトリの権限を自分に変更
-      - `reload.zsh`: zshrcのリロード
-    - **git**
-      - `author_stats.zsh`: author毎のコミット数、追加・削除行数を表形式で表示
-      - `committer_showable.zsh`: コミット時にコミッターの情報を表示
-      - `current_branch.zsh`: 今いるブランチを表示
-      - `pretty_log.zsh`: いい感じのコミットログを表示
-      - `user_config.zsh`: ユーザー情報を表示、変更
+  - **util**
+    - `memo.zsh`: メモの管理
+    - `perm.zsh`: ディレクトリの権限を自分に変更
+    - `reload.zsh`: zshrcのリロード
+  - **git**
+    - `author_stats.zsh`: author毎のコミット数、追加・削除行数を表形式で表示
+    - `committer_showable.zsh`: コミット時にコミッターの情報を表示
+    - `current_branch.zsh`: 今いるブランチを表示
+    - `pretty_log.zsh`: いい感じのコミットログを表示
+    - `user_config.zsh`: ユーザー情報を表示、変更
